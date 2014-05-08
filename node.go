@@ -6,7 +6,7 @@
 package huffman
 
 type huffNode struct {
-	char  rune
+	char  byte
 	freq  float64
 	left  *huffNode
 	right *huffNode
