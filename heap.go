@@ -5,10 +5,10 @@
 package huffman
 
 type node struct {
-	char      rune
-	frequency float64
-	left      *node
-	right     *node
+	char  rune
+	freq  float64
+	left  *node
+	right *node
 }
 
 type nodeHeap []*node
@@ -16,7 +16,7 @@ type nodeHeap []*node
 func (nh nodeHeap) Len() int { return len(nh) }
 
 func (nh nodeHeap) Less(i, j int) bool {
-	return nh[i].frequency < nh[j].frequency
+	return nh[i].freq < nh[j].freq
 }
 
 func (nh nodeHeap) Swap(i, j int) {
