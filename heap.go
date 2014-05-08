@@ -4,14 +4,7 @@
 // Heap for use with the Huffman Tree
 package huffman
 
-type node struct {
-	char  rune
-	freq  float64
-	left  *node
-	right *node
-}
-
-type nodeHeap []*node
+type nodeHeap []*huffNode
 
 func (nh nodeHeap) Len() int { return len(nh) }
 
@@ -24,13 +17,13 @@ func (nh nodeHeap) Swap(i, j int) {
 }
 
 func (nh *nodeHeap) Push(x interface{}) {
-	*nh = append(*nh, x.(*node))
+	*nh = append(*nh, x.(*huffNode))
 }
 
 func (nh *nodeHeap) Pop() interface{} {
 	old := *nh
 	n := len(old)
-	node := old[n-1]
+	huffNode := old[n-1]
 	*nh = old[0 : n-1]
-	return node
+	return huffNode
 }
