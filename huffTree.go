@@ -4,7 +4,7 @@
 package huffman
 
 import (
-	"os"
+	"io/ioutil"
 )
 
 // The actual Huffman Tree and all associated functions. Will build up a
@@ -20,14 +20,14 @@ type huffTree *huffNode
 // a string representing the decoded File. If the decode fails (wrong tree, some
 // file read error, etc) the value of the returned string is undefined but error
 // will be non-nil.
-func (t huffTree) decode(fromFile *File) decoded string, err error {
+func (t huffTree) decode(filename string) decoded string, err error {
 
 }
 
 // encode turns the bytes in fromFile into bytes in toFile, compressed under
 // the tree it is called on. On success, returns a nil error and returns a 
 // non-nill error otherwise.
-func (t huffTree) encode(fromFile *file, toFile *File) err error {
+func (t huffTree) encode(fromFile string, toFile string) err error {
 
 }
 
@@ -44,8 +44,21 @@ func (t huffTree) writeToFile(file *File) err error {
 
 // makeTreeFromText takes in a text file and turns it into a huffTree, which
 // it then returns.
-func makeTreeFromText(f *File) (t huffTree, err error) {
+func makeTreeFromText(filename string) (t huffTree, err error) {
+	// Read the text byte-by-byte, building up a map of byte counts
+	buf, err := readFile(filename)
+	if err != nil {
+		// Something went wrong!
+		return nil, err
+	}
 
+	// Scan the byte slice "buf" and count how many times each byte shows up
+	counts := map[byte]uint32 
+	for _, elem := range buf {
+		counts[elem] += 1
+	}
+
+	// Turn 
 }
 
 // makeTreeFromTreeFile takes in a File of the same format TREE.writeToFile()
@@ -53,6 +66,10 @@ func makeTreeFromText(f *File) (t huffTree, err error) {
 // to make the tree, so you can put it anywhere in the File as long as the passed
 // *File is pointing at the beginning of the tree. Returns a non-nil error iff
 // the tree formation fails.
-func makeTreeFromTreeFile(f *File) (t huffTree, err error) {
+func makeTreeFromTreeFile(filename string) (t huffTree, err error) {
+
+}
+
+func makeTreeFromNodeList(nodes []*huffNode) (t huffTree, err error) {
 
 }
