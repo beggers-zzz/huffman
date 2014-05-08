@@ -58,7 +58,14 @@ func makeTreeFromText(filename string) (t huffTree, err error) {
 		counts[elem] += 1
 	}
 
-	// Turn 
+	// Turn the counts into huffNodes
+	nodes := make([]*huffNode, 0)
+	for currentByte, byteCount := range counts {
+		node := &huffNode{char: currentByte, count: byteCount}
+		nodes = append(nodes, node)
+	}
+
+	return makeTreeFromNodeSlice(nodes)
 }
 
 // makeTreeFromTreeFile takes in a File of the same format TREE.writeToFile()
@@ -70,6 +77,6 @@ func makeTreeFromTreeFile(filename string) (t huffTree, err error) {
 
 }
 
-func makeTreeFromNodeList(nodes []*huffNode) (t huffTree, err error) {
+func makeTreeFromNodeSlice(nodes []*huffNode) (t huffTree, err error) {
 
 }
