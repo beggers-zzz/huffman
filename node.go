@@ -1,10 +1,9 @@
 // Ben Eggers
 // GNU GPL'd
 
-// Node used in the Huffman Tree
-
 package huffman
 
+// Node used in the Huffman Tree
 type huffNode struct {
 	char  byte
 	freq  float64
