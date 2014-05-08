@@ -6,7 +6,7 @@ package huffman
 // Node used in the Huffman Tree
 type huffNode struct {
 	char  byte
-	freq  uint32
+	count  uint32
 	left  *huffNode
 	right *huffNode
 }

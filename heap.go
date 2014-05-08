@@ -9,7 +9,7 @@ type nodeHeap []*huffNode
 func (nh nodeHeap) Len() int { return len(nh) }
 
 func (nh nodeHeap) Less(i, j int) bool {
-	return nh[i].freq < nh[j].freq
+	return nh[i].count < nh[j].count
 }
 
 func (nh nodeHeap) Swap(i, j int) {
