@@ -7,7 +7,28 @@ package huffman
 
 import (
 	"testing"
+	"io/ioutil"
+	"os"
 )
+
+////////////////////////////////////////////////////////////////////////////////
+// makeTreeFromText tests
+////////////////////////////////////////////////////////////////////////////////
+
+func TestMakeTreeFromTextEmpty(t *testing.T) {
+	b := make([]byte, 0)
+	err := ioutil.WriteFile(".test", b, 0644)
+	defer os.Remove(".test")
+	if err != nil { t.Error(err) }
+	tree, err := makeTreeFromText(".test")
+	if err != nil {
+		t.Error("Got non-nil error from makeTreeFromText: ", err)
+	}
+	if tree != nil {
+		t.Error("Tree should be nil! Got: ", tree)
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // makeTreeFromNodeSlice tests
