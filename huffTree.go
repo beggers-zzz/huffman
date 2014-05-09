@@ -6,6 +6,7 @@ package huffman
 import (
 	"container/heap"
 	"io/ioutil"
+	"errors"
 )
 
 // The actual Huffman Tree and all associated functions. Will build up a
@@ -64,7 +65,11 @@ func makeTreeFromText(filename string) (t huffTree, err error) {
 		nodes = append(nodes, node)
 	}
 
-	return makeTreeFromNodeSlice(nodes), nil
+	t = makeTreeFromNodeSlice(nodes)
+	if t == nil {
+		err = errors.New("Empty file.")
+	}
+	return t, err
 }
 
 // // makeTreeFromTreeFile takes in a File of the same format TREE.writeToFile()
