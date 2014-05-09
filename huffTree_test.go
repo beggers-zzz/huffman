@@ -23,8 +23,8 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 	}
 	defer os.Remove(".test")
 	tree, err := makeTreeFromText(".test")
-	if err != nil {
-		t.Error("Got non-nil error from makeTreeFromText: ", err)
+	if err == nil {
+		t.Error("Got nil error from makeTreeFromText! Should be 'Text file empty'")
 	}
 	if tree != nil {
 		t.Error("Tree should be nil! Got: ", tree)
@@ -32,7 +32,7 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 }
 
 func TestMakeTreeFromTextSingleChar(t *testing.T) {
-	b := []byte{255}
+	b := []byte{0}
 	err := ioutil.WriteFile(".test", b, 0644)
 	if err != nil {
 		t.Error(err)
@@ -43,16 +43,16 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 		t.Error("Got non-nil error from makeTreeFromText: ", err)
 	}
 	if tree == nil {
-		t.Error("Tree should be nil! Got: ", tree)
+		t.Error("Tree should not be nil! Got: ", tree)
 	}
-	if tree.count != 1 || tree.char != 255 {
-		t.Error("Tree was built improperly! Expected: { char: 255, count: 1 },",
+	if tree.count != 1 || tree.char != 0 {
+		t.Error("Tree was built improperly! Expected: { char: 0, count: 1 },",
 			"got { char:", tree.char, ", count:", tree.count, "}")
 	}
 }
 
 func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
-	b := []byte{255, 255}
+	b := []byte{0, 0}
 	err := ioutil.WriteFile(".test", b, 0644)
 	if err != nil {
 		t.Error(err)
@@ -63,16 +63,16 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 		t.Error("Got non-nil error from makeTreeFromText: ", err)
 	}
 	if tree == nil {
-		t.Error("Tree should be nil! Got: ", tree)
+		t.Error("Tree should not be nil! Got: ", tree)
 	}
-	if tree.count != 2 || tree.char != 255 {
-		t.Error("Tree was built improperly! Expected: { char: 255, count: 2 },",
+	if tree.count != 2 || tree.char != 0 {
+		t.Error("Tree was built improperly! Expected: { char: 0, count: 2 },",
 			"got { char:", tree.char, ", count:", tree.count, "}")
 	}
 }
 
 func TestMakeTreeFromTextBasicTree(t *testing.T) {
-	b := []byte{255, 255, 254}
+	b := []byte{0, 0, 2}
 	err := ioutil.WriteFile(".test", b, 0644)
 	if err != nil {
 		t.Error(err)
@@ -83,18 +83,54 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 		t.Error("Got non-nil error from makeTreeFromText: ", err)
 	}
 	if tree == nil {
-		t.Error("Tree should be nil! Got: ", tree)
+		t.Error("Tree should not be nil! Got: ", tree)
 	}
 	if tree.count != 3 {
 		t.Error("Tree's count was wrong! Should be 3, was", tree.count)
 	}
-	if tree.left.count != 1 || tree.left.char != 254 {
-		t.Error("Tree was built improperly! Expected: { char: 254, count: 1 },",
+	if tree.left.count != 1 || tree.left.char != 2 {
+		t.Error("Tree was built improperly! Expected: { char: 2, count: 1 },",
 			"got { char:", tree.left.char, ", count:", tree.left.count, "}")
 	}
-	if tree.right.count != 2 || tree.right.char != 255 {
-		t.Error("Tree was built improperly! Expected: { char: 255, count: 2 },",
+	if tree.right.count != 2 || tree.right.char != 0 {
+		t.Error("Tree was built improperly! Expected: { char: 0, count: 2 },",
 			"got { char:", tree.right.char, ", count:", tree.right.count, "}")
+	}
+}
+
+func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
+	b := []byte{0, 0, 1, 1, 2, 2, 2}
+	err := ioutil.WriteFile(".test", b, 0644)
+	if err != nil {
+		t.Error(err)
+	}
+	defer os.Remove(".test")
+	tree, err := makeTreeFromText(".test")
+	if err != nil {
+		t.Error("Got non-nil error from makeTreeFromText: ", err)
+	}
+	if tree == nil {
+		t.Error("Tree should not be nil! Got: ", tree)
+	}
+	if tree.count != 7 {
+		t.Error("Tree's count was wrong! Should be 7, was", tree.count)
+	}
+	if tree.left.count != 3 || tree.left.char != 2 {
+		t.Error("Tree was built improperly! Expected: { char: 2, count: 3 },",
+			"got { char:", tree.left.char, ", count:", tree.left.count, "}")
+	}
+	if tree.right.count != 4 {
+		t.Error("Tree.right's count was wrong! Should be 4, was", tree.right.count)
+	}
+	if tree.right.left.count != 2 || tree.right.left.char != 0 {
+		t.Error("Tree was built improperly! On tree.right.left: Expected:,",
+			"{ char: 0, count: 2 },", "got { char:", tree.right.char,
+			", count:", tree.right.count, "}")
+	}
+	if tree.right.right.count != 2 || tree.right.right.char != 1 {
+		t.Error("Tree was built improperly! On tree.right.left: Expected:,",
+			"{ char: 1, count: 2 },", "got { char:", tree.right.char,
+			", count:", tree.right.count, "}")
 	}
 }
 
