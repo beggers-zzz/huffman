@@ -5,6 +5,7 @@ package huffman
 
 import (
 	"io/ioutil"
+	"container/heap"
 )
 
 // The actual Huffman Tree and all associated functions. Will build up a
@@ -78,5 +79,22 @@ func makeTreeFromTreeFile(filename string) (t huffTree, err error) {
 }
 
 func makeTreeFromNodeSlice(nodes []*huffNode) (t huffTree, err error) {
+	// We're going to put the nodes in a heap, with low-ness determined
+	// by the nodes' counts.
+	nh := &nodeHeap{}
+	heap.Init(nh)
+	for _, node := range nodes {
+		heap.Push(nh, node)
+	}
 
+	// Now, we're going to do the following:
+	// Until there's only one node in the heap:
+	// 		Remove the lowest-count two nodes
+	// 		Make a new node with those two as children, whose count is the
+	//			sum of its childrens' counts
+	//		Add that new node to the heap
+	//
+	// This will create an optimally-balanced tree, based on byte counts. For
+	// more information, see: http://en.wikipedia.org/wiki/Huffman_coding.
+	
 }
