@@ -64,7 +64,7 @@ func makeTreeFromText(filename string) (t huffTree, err error) {
 		nodes = append(nodes, node)
 	}
 
-	return makeTreeFromNodeSlice(nodes)
+	return makeTreeFromNodeSlice(nodes), nil
 }
 
 // // makeTreeFromTreeFile takes in a File of the same format TREE.writeToFile()
@@ -76,7 +76,7 @@ func makeTreeFromText(filename string) (t huffTree, err error) {
 
 // }
 
-func makeTreeFromNodeSlice(nodes []*huffNode) (t huffTree, err error) {
+func makeTreeFromNodeSlice(nodes []*huffNode) (t huffTree) {
 	// We're going to put the nodes in a heap, with low-ness determined
 	// by the nodes' counts.
 	nh := &nodeHeap{}
@@ -101,5 +101,9 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t huffTree, err error) {
 			count: nodeOne.count + nodeTwo.count,
 			left:  nodeOne,
 			right: nodeTwo}
+		heap.Push(nh, newNode)
 	}
+
+	// Great, now there's only one node and it's the root of the tree!
+	return heap.Pop(nh).(*huffNode)
 }
