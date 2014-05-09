@@ -68,14 +68,13 @@ func makeTreeFromText(filename string) (t huffTree, err error) {
 }
 
 // // makeTreeFromTreeFile takes in a File of the same format TREE.writeToFile()
-// // puts out, and remakes a huffTree from it.  Only reads the few bytes required
-// // to make the tree, so you can put it anywhere in the File as long as the passed
-// // *File is pointing at the beginning of the tree. Returns a non-nil error iff
-// // the tree formation fails.
+// // puts out, and remakes a huffTree from it.
 // func makeTreeFromTreeFile(filename string) (t huffTree, err error) {
 
 // }
 
+// makeTreeFromNodeSlice makes a huffman tree from the passed slice of huffNodes.
+// If len(nodes) == 0, returns a nil tree.
 func makeTreeFromNodeSlice(nodes []*huffNode) (t huffTree) {
 	if len(nodes) == 0 {
 		return nil
