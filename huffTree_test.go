@@ -13,6 +13,14 @@ import (
 // makeTreeFromNodeSlice tests
 ////////////////////////////////////////////////////////////////////////////////
 
+func TestMakeTreeFromNodesEmpty(t *testing.T) {
+	nodes := []*huffNode{}
+	tree := makeTreeFromNodeSlice(nodes)
+	if tree != nil {
+		t.Error("Tree wasn't nil! tree: ", tree, ".")
+	}
+}
+
 func TestMakeTreeFromNodesOneNode(t *testing.T) {
 	node := &huffNode{char: 'x', count: 10}
 	nodes := []*huffNode{node}

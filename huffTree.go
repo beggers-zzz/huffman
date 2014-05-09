@@ -77,6 +77,10 @@ func makeTreeFromText(filename string) (t huffTree, err error) {
 // }
 
 func makeTreeFromNodeSlice(nodes []*huffNode) (t huffTree) {
+	if len(nodes) == 0 {
+		return nil
+	}
+
 	// We're going to put the nodes in a heap, with low-ness determined
 	// by the nodes' counts.
 	nh := &nodeHeap{}
