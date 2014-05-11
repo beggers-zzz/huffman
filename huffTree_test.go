@@ -72,22 +72,20 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 	}
 	defer os.Remove(".test")
 	tree, err := MakeTreeFromText(".test")
+	root := tree.root
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
-	if tree == nil {
-		t.Error("Tree should not be nil! Got: ", tree)
+	if root.count != 3 {
+		t.Error("Tree's count was wrong! Should be 3, was", root.count)
 	}
-	if tree.count != 3 {
-		t.Error("Tree's count was wrong! Should be 3, was", tree.count)
-	}
-	if tree.left.count != 1 || tree.left.char != 2 {
+	if root.left.count != 1 || root.left.char != 2 {
 		t.Error("Tree was built improperly! Expected: { char: 2, count: 1 },",
-			"got { char:", tree.left.char, ", count:", tree.left.count, "}")
+			"got { char:", root.left.char, ", count:", root.left.count, "}")
 	}
-	if tree.right.count != 2 || tree.right.char != 0 {
+	if root.right.count != 2 || root.right.char != 0 {
 		t.Error("Tree was built improperly! Expected: { char: 0, count: 2 },",
-			"got { char:", tree.right.char, ", count:", tree.right.count, "}")
+			"got { char:", root.right.char, ", count:", root.right.count, "}")
 	}
 }
 
