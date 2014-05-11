@@ -22,6 +22,7 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 		t.Error(err)
 	}
 	defer os.Remove(".test")
+
 	tree, err := MakeTreeFromText(".test")
 	if err == nil {
 		t.Error("Got nil error from MakeTreeFromText! Should be 'Text file empty'")
@@ -35,11 +36,13 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 		t.Error(err)
 	}
 	defer os.Remove(".test")
+
 	tree, err := MakeTreeFromText(".test")
-	root := tree.root
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
+	
+	root := tree.root
 	if root.count != 1 || root.char != 0 {
 		t.Error("Tree was built improperly! Expected: { char: 0, count: 1 },",
 			"got { char:", root.char, ", count:", root.count, "}")
@@ -53,11 +56,13 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 		t.Error(err)
 	}
 	defer os.Remove(".test")
+	
 	tree, err := MakeTreeFromText(".test")
-	root := tree.root
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
+	
+	root := tree.root
 	if root.count != 2 || root.char != 0 {
 		t.Error("Tree was built improperly! Expected: { char: 0, count: 2 },",
 			"got { char:", root.char, ", count:", root.count, "}")
@@ -71,11 +76,13 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 		t.Error(err)
 	}
 	defer os.Remove(".test")
+	
 	tree, err := MakeTreeFromText(".test")
-	root := tree.root
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
+	
+	root := tree.root
 	if root.count != 3 {
 		t.Error("Tree's count was wrong! Should be 3, was", root.count)
 	}
@@ -97,11 +104,9 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 	}
 	defer os.Remove(".test")
 	tree, err := MakeTreeFromText(".test")
+	root := tree.root
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
-	}
-	if tree == nil {
-		t.Error("Tree should not be nil! Got: ", tree)
 	}
 	if tree.count != 7 {
 		t.Error("Tree's count was wrong! Should be 7, was", tree.count)
