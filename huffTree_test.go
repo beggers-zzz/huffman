@@ -138,25 +138,35 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 
 func TestMakeTreeFromNodesEmpty(t *testing.T) {
 	nodes := []*huffNode{}
-	tree := makeTreeFromNodeSlice(nodes)
-	if tree != nil {
-		t.Error("Tree wasn't nil! tree: ", tree, ".")
+	tree, err := makeTreeFromNodeSlice(nodes)
+	
+	if err == nil {
+		t.Error("Got nil error when we shouldn't have.")
 	}
 }
 
 func TestMakeTreeFromNodesOneNode(t *testing.T) {
 	node := &huffNode{char: 120, count: 10}
 	nodes := []*huffNode{node}
-	tree := makeTreeFromNodeSlice(nodes)
-	if tree.char != 120 || tree.count != 10 {
-		t.Error("Unexpected! Got node with count:", tree.count, "and char:",
-			tree.char, "instead of count:", node.count, "and char:", node.char)
+	tree, err := makeTreeFromNodeSlice(nodes)
+	if err != nil {
+		t.Error(err)
+	}
+
+	root := tree.root
+	if root.char != 120 || root.count != 10 {
+		t.Error("Unexpected! Got node with count:", root.count, "and char:",
+			root.char, "instead of count:", node.count, "and char:", node.char)
 	}
 }
 
 func TestMakeTreeFromNodesBasicTree(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 2}, {char: 120, count: 2}}
-	tree := makeTreeFromNodeSlice(nodes)
+	tree, err := makeTreeFromNodeSlice(nodes)
+	if err != nil {
+		t.Error(err)
+	}
+
 	if tree.count != 4 {
 		t.Error("Tree root count should have been 4, was: ", tree.count, ".")
 	}
@@ -176,7 +186,7 @@ func TestMakeTreeFromNodesMultiLevelTree(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 2},
 		{char: 120, count: 2},
 		{char: 121, count: 3}}
-	tree := makeTreeFromNodeSlice(nodes)
+	tree, err := makeTreeFromNodeSlice(nodes)
 	if tree.count != 7 {
 		t.Error("Tree root count should have been 7, was:", tree.count)
 	}
