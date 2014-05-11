@@ -4,6 +4,7 @@
 package main
 
 import (
+	"github.com/BenedictEggers/huffman"
 	"os"
 	"fmt"
 )

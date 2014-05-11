@@ -5,8 +5,8 @@ package huffman
 
 import (
 	"container/heap"
-	"io/ioutil"
 	"errors"
+	"io/ioutil"
 )
 
 // The actual Huffman Tree and all associated functions. Will build up a
