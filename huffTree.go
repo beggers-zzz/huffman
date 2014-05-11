@@ -45,11 +45,11 @@ type huffTree *huffNode
 
 // makeTreeFromText takes in a text file and turns it into a huffTree, which
 // it then returns.
-func makeTreeFromText(filename string) (t huffTree, err error) {
+func MakeTreeFromText(filename string) (t huffTree, err error) {
 	// Read the text byte-by-byte, building up a map of byte counts
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	// Scan the byte slice "buf" and count how many times each byte shows up

@@ -18,11 +18,15 @@ func main() {
 	if len(args) != 4 {
 		Usage(args[0])
 	}
+	t, err := huffman.MakeTreeFromText("filler")
+	if t != nil || err == nil {
+		fmt.Println("What the hell man")
+	}
 }
 
 // Prints out the usage of the program, and exits with an error status. Called
 // if the user puts in bad command-line args.
 func Usage(progName string) {
 	fmt.Println("Usage:", progName, "-[e | d] FROM_FILE TO_FILE")
-	os.exit(1)
+	os.Exit(1)
 }
