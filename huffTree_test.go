@@ -27,6 +27,11 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 	if err == nil {
 		t.Error("Got nil error from MakeTreeFromText! Should be 'Text file empty'")
 	}
+
+	root := tree.root
+	if root != nil {
+		t.Error("Got non-nil root.")
+	}
 }
 
 func TestMakeTreeFromTextSingleChar(t *testing.T) {
@@ -143,6 +148,11 @@ func TestMakeTreeFromNodesEmpty(t *testing.T) {
 	if err == nil {
 		t.Error("Got nil error when we shouldn't have.")
 	}
+
+	root := tree.root
+	if root != nil {
+		t.Error("Got non-nil root.")
+	}
 }
 
 func TestMakeTreeFromNodesOneNode(t *testing.T) {
@@ -188,23 +198,28 @@ func TestMakeTreeFromNodesMultiLevelTree(t *testing.T) {
 		{char: 120, count: 2},
 		{char: 121, count: 3}}
 	tree, err := makeTreeFromNodeSlice(nodes)
-	if tree.count != 7 {
-		t.Error("Tree root count should have been 7, was:", tree.count)
+	if err != nil {
+		t.Error(err)
 	}
-	if tree.left.count != 3 || tree.left.char != 121 {
+
+	root := tree.root
+	if root.count != 7 {
+		t.Error("Tree's root count should have been 7, was:", root.count)
+	}
+	if root.left.count != 3 || root.left.char != 121 {
 		t.Error("Tree's left node was wrong! Expected { 121, 3 }, got {",
-			tree.left.char, ", ", tree.left.count, "}")
+			root.left.char, ", ", root.left.count, "}")
 	}
-	if tree.right.count != 4 {
-		t.Error("Right subtree count should have been 4, was:", tree.right.count)
+	if root.right.count != 4 {
+		t.Error("Right subtree count should have been 4, was:", root.right.count)
 	}
-	if tree.right.right.count != 2 || tree.right.right.char != 120 {
+	if root.right.right.count != 2 || root.right.right.char != 120 {
 		t.Error("Tree's right node's right node was wrong! Expected { 120, 2 }, got {",
-			tree.right.right.char, ",", tree.right.right.count)
+			root.right.right.char, ",", root.right.right.count)
 	}
-	if tree.right.left.count != 2 || tree.right.left.char != 120 {
-		t.Error("Tree's right node's left node left node was wrong!",
-			"Expected { 120, 2 }, got { ", tree.right.left.char,
-			",", tree.right.left.count, "}")
+	if root.right.left.count != 2 || root.right.left.char != 120 {
+		t.Error("Tree's right node's left node was wrong!",
+			"Expected { 120, 2 }, got { ", root.right.left.char,
+			",", root.right.left.count, "}")
 	}
 }
