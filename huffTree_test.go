@@ -103,30 +103,32 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 		t.Error(err)
 	}
 	defer os.Remove(".test")
+	
 	tree, err := MakeTreeFromText(".test")
-	root := tree.root
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
-	if tree.count != 7 {
-		t.Error("Tree's count was wrong! Should be 7, was", tree.count)
+	
+	root := tree.root
+	if root.count != 7 {
+		t.Error("Tree's count was wrong! Should be 7, was", root.count)
 	}
-	if tree.left.count != 3 || tree.left.char != 2 {
+	if root.left.count != 3 || root.left.char != 2 {
 		t.Error("Tree was built improperly! Expected: { char: 2, count: 3 },",
-			"got { char:", tree.left.char, ", count:", tree.left.count, "}")
+			"got { char:", root.left.char, ", count:", root.left.count, "}")
 	}
-	if tree.right.count != 4 {
-		t.Error("Tree.right's count was wrong! Should be 4, was", tree.right.count)
+	if root.right.count != 4 {
+		t.Error("Tree.right's count was wrong! Should be 4, was", root.right.count)
 	}
-	if tree.right.left.count != 2 || tree.right.left.char != 0 {
+	if root.right.left.count != 2 || root.right.left.char != 0 {
 		t.Error("Tree was built improperly! On tree.right.left: Expected:,",
-			"{ char: 0, count: 2 },", "got { char:", tree.right.char,
-			", count:", tree.right.count, "}")
+			"{ char: 0, count: 2 },", "got { char:", root.right.char,
+			", count:", root.right.count, "}")
 	}
-	if tree.right.right.count != 2 || tree.right.right.char != 1 {
+	if root.right.right.count != 2 || root.right.right.char != 1 {
 		t.Error("Tree was built improperly! On tree.right.left: Expected:,",
-			"{ char: 1, count: 2 },", "got { char:", tree.right.char,
-			", count:", tree.right.count, "}")
+			"{ char: 1, count: 2 },", "got { char:", root.right.char,
+			", count:", root.right.count, "}")
 	}
 }
 
