@@ -167,16 +167,17 @@ func TestMakeTreeFromNodesBasicTree(t *testing.T) {
 		t.Error(err)
 	}
 
-	if tree.count != 4 {
-		t.Error("Tree root count should have been 4, was: ", tree.count, ".")
+	root := tree.root
+	if root.count != 4 {
+		t.Error("Tree's root count should have been 4, was: ", root.count, ".")
 	}
-	if tree.left.count != 2 || tree.left.char != 120 {
+	if root.left.count != 2 || root.left.char != 120 {
 		t.Error("Tree's left node was wrong! Expected { 120, 2 }, got {",
-			tree.left.char, ",", tree.left.count, "}")
+			root.left.char, ",", root.left.count, "}")
 	}
-	if tree.right.count != 2 || tree.right.char != 120 {
+	if root.right.count != 2 || root.right.char != 120 {
 		t.Error("Tree's right node was wrong! Expected { 120, 2 }, got {",
-			tree.right.char, ",", tree.right.count, "}")
+			root.right.char, ",", root.right.count, "}")
 	}
 }
 
