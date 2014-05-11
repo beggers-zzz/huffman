@@ -19,9 +19,12 @@ func main() {
 		Usage(args[0])
 	}
 	t, err := huffman.MakeTreeFromText("filler")
-	if t != nil || err == nil {
-		fmt.Println("What the hell man")
+	if err == nil {
+		fmt.Println("Improperly-formatted text file.")
+		os.Exit(1)
 	}
+	
+
 }
 
 // Prints out the usage of the program, and exits with an error status. Called
