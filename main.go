@@ -4,7 +4,7 @@
 package main
 
 import (
-	"github.com/BenedictEggers/huffman"
+	"github.com/BenedictEggers/huffman/huffTree"
 	"os"
 	"fmt"
 )
@@ -18,7 +18,7 @@ func main() {
 	if len(args) != 4 {
 		Usage(args[0])
 	}
-	t, err := huffman.MakeTreeFromText("filler")
+	t, err := huffTree.MakeTreeFromText("filler")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

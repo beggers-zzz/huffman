@@ -2,7 +2,7 @@
 // GNU GPL'd
 
 // Tests the heap
-package huffman
+package huffTree
 
 import (
 	"container/heap"

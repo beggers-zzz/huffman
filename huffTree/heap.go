@@ -2,7 +2,7 @@
 // GNU GPL'd
 
 // Heap for use with the Huffman Tree
-package huffman
+package huffTree
 
 type nodeHeap []*huffNode
 

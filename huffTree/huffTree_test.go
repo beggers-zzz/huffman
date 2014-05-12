@@ -1,7 +1,7 @@
 // Ben Eggers
 // GNU GPL'd
 
-package huffman
+package huffTree
 
 // Tests the huffTree
 
