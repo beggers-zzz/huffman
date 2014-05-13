@@ -3,7 +3,7 @@
 
 // Tests the ByteReader
 
-package byteIO
+package bitIO
 
 import (
 
