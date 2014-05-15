@@ -6,16 +6,14 @@
 // you shouldn't mess with it.
 package bitIO
 
-import (
-	"error"
-)
+import "errors"
 
 type BitReader struct {
 	bitIOStruct
 }
 
 // Set up and return a BitReader on the passed file.
-func MakeBitReader(file *File) (b BitReader) {
+func MakeBitReader(file string) (b BitReader, err error) {
 	return makeBitIOStruct(file)
 }
 
@@ -37,6 +35,6 @@ func (b BitReader) ReadBit() (bit int8, err error) {
 }
 
 // Closes the reader, closing its associated file descriptor
-func (b BitReader) Close() (err error) {
+func (b BitReader) CloseReader() (err error) {
 	return file.Close()
 }

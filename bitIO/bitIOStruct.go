@@ -9,12 +9,15 @@ import "os"
 type bitIOStruct struct {
 	bits    []uint8 // should ALWAYS have length 1
 	numBits uint8
-	file    *File
+	file    *os.File
 }
 
 // Make a bitIOStruct on the passed File descriptor
-func makeBitIOStruct(file *File) (b bitIOStruct) {
-	b.file = file
+func makeBitIOStruct(file string) (b bitIOStruct, err error) {
+	b.file, err = os.Open(file)
+	if err != nil {
+		return bitIOStruct{}, err
+	}
 	b.bits = make([]int8, 1)
 	b.numBits = 0
 }

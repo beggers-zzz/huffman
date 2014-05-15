@@ -3,16 +3,14 @@
 
 package bitIO
 
-import (
-	"error"
-)
+import "errors"
 
 type BitWriter struct {
 	bitIOStruct
 }
 
 // Set up and return a BitWriter on the passed file.
-func MakeBitReader(file *File) (b BitReader) {
+func MakeBitWriter(file string) (b BitReader, err error) {
 	return makeBitIOStruct(file)
 }
 
@@ -46,7 +44,7 @@ func (b BitReader) flush() (err error) {
 
 // Closes the BitReader, flushing final bits to disk if need be and closing
 // the file descriptor.
-func (b BitReader) Close() (err error) {
+func (b BitReader) CloseWriter() (err error) {
 	err = b.flush()
 	if err != nil {
 		return err
