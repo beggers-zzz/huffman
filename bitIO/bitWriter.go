@@ -11,7 +11,8 @@ type BitWriter struct {
 
 // Set up and return a BitWriter on the passed file.
 func MakeBitWriter(file string) (b BitReader, err error) {
-	return makeBitIOStruct(file)
+	str, err := makeBitIOStruct(file)
+	return BitWriter{str}, err
 }
 
 // Writes one bit. If the passed int8 is 1, writes a one. If it's 0,

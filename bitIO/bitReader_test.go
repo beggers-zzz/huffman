@@ -5,4 +5,8 @@
 
 package bitIO
 
-import ()
+import "testing"
+
+func TestNothingAtAll(t *testing.T) {
+	// do nothing
+}

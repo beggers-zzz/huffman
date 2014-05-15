@@ -6,21 +6,20 @@
 // you shouldn't mess with it.
 package bitIO
 
-import "errors"
-
 type BitReader struct {
 	bitIOStruct
 }
 
 // Set up and return a BitReader on the passed file.
 func MakeBitReader(file string) (b BitReader, err error) {
-	return makeBitIOStruct(file)
+	str, err := makeBitIOStruct(file)
+	return BitReader{str}, err
 }
 
 // Returns the next bit on the file stream. Will always be 0 or 1. Will
 // return a non-nil err iff the read failed, or on EOF
-func (b BitReader) ReadBit() (bit int8, err error) {
-	bit = b.bits % 2
+func (b BitReader) ReadBit() (bit byte, err error) {
+	bit = b.bits[0] % 2
 	b.bits[0] = b.bits[0] >> 1
 	b.numBits += 1
 	if b.numBits == 8 {
@@ -36,5 +35,5 @@ func (b BitReader) ReadBit() (bit int8, err error) {
 
 // Closes the reader, closing its associated file descriptor
 func (b BitReader) CloseReader() (err error) {
-	return file.Close()
+	return b.file.Close()
 }

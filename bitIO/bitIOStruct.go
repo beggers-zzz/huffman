@@ -7,8 +7,8 @@ import "os"
 
 // A struct useful for both bitReader and bitWriter
 type bitIOStruct struct {
-	bits    []uint8 // should ALWAYS have length 1
-	numBits uint8
+	bits    []byte // should ALWAYS have length 1
+	numBits int8
 	file    *os.File
 }
 
@@ -18,6 +18,7 @@ func makeBitIOStruct(file string) (b bitIOStruct, err error) {
 	if err != nil {
 		return bitIOStruct{}, err
 	}
-	b.bits = make([]int8, 1)
+	b.bits = make([]byte, 1)
 	b.numBits = 0
+	return b, nil
 }
