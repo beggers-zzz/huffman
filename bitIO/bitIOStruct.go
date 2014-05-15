@@ -8,7 +8,7 @@ import "os"
 // A struct useful for both bitReader and bitWriter
 type bitIOStruct struct {
 	bits    []byte // should ALWAYS have length 1
-	numBits int8
+	numBits uint8
 	file    *os.File
 }
 

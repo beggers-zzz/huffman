@@ -34,6 +34,6 @@ func (b BitReader) ReadBit() (bit byte, err error) {
 }
 
 // Closes the reader, closing its associated file descriptor
-func (b BitReader) CloseReader() (err error) {
+func (b BitReader) Close() (err error) {
 	return b.file.Close()
 }
