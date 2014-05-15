@@ -28,18 +28,18 @@ func (t HuffTree) Decode(filename string) (decoded string, err error) {
 	return "", errors.New("Undefined method")
 }
 
-// // encode turns the bytes in fromFile into bytes in toFile, compressed under
-// // the tree it is called on. On success, returns a nil error and returns a
-// // non-nill error otherwise.
-// func (t HuffTree) encode(fromFile string, toFile string) err error {
+// encode turns the bytes in fromFile into bytes in toFile, compressed under
+// the tree it is called on. On success, returns a nil error and returns a
+// non-nill error otherwise.
+func (t HuffTree) encode(fromFile string, toFile string) err error {
+	return errors.New("Undefined method")
+}
 
-// }
-
-// // Write the tree out to a file at the point the file is currently seek-ed to.
-// // Necessary to keep around if you plan on decoding files :)
-// func (t HuffTree) writeToFile(file *File) err error {
-
-// }
+// Write the tree out to a file at the point the file is currently seek-ed to.
+// Necessary to keep around if you plan on decoding files :)
+func (t HuffTree) writeToFile(file *File) err error {
+	return errors.New("Undefined method")
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //               Functions to help with making the tree.
@@ -70,11 +70,11 @@ func MakeTreeFromText(filename string) (t HuffTree, err error) {
 	return makeTreeFromNodeSlice(nodes)
 }
 
-// // makeTreeFromTreeFile takes in a File of the same format TREE.writeToFile()
-// // puts out, and remakes a HuffTree from it.
-// func makeTreeFromTreeFile(filename string) (t HuffTree, err error) {
-
-// }
+// makeTreeFromTreeFile takes in a File of the same format TREE.writeToFile()
+// puts out, and remakes a HuffTree from it.
+func makeTreeFromTreeFile(filename string) (t HuffTree, err error) {
+	return HuffTree{}, Errors.new("Undefined method")
+}
 
 // makeTreeFromNodeSlice makes a huffman tree from the passed slice of huffNodes.
 // If len(nodes) == 0, returns a nil tree.
