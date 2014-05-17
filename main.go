@@ -16,7 +16,7 @@ import (
 func main() {
 	args := os.Args
 	if len(args) != 4 {
-		Usage(args[0])
+		usage(args[0])
 	}
 	t, err := huffTree.MakeTreeFromText("filler")
 	if err != nil {
@@ -29,7 +29,7 @@ func main() {
 
 // Prints out the usage of the program, and exits with an error status. Called
 // if the user puts in bad command-line args.
-func Usage(progName string) {
+func usage(progName string) {
 	fmt.Println("Usage:", progName, "-[e | d] FROM_FILE TO_FILE")
 	os.Exit(1)
 }
