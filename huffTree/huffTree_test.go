@@ -11,19 +11,21 @@ import (
 	"testing"
 )
 
+var filename = ".test"
+
 ////////////////////////////////////////////////////////////////////////////////
 // MakeTreeFromText tests
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestMakeTreeFromTextEmpty(t *testing.T) {
 	b := make([]byte, 0)
-	err := ioutil.WriteFile(".test", b, 0644)
+	err := ioutil.WriteFile(filename, b, 0644)
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.Remove(".test")
+	defer os.Remove(filename)
 
-	tree, err := MakeTreeFromText(".test")
+	tree, err := MakeTreeFromText(filename)
 	if err == nil {
 		t.Error("Got nil error from MakeTreeFromText! Should be 'Text file empty'")
 	}
@@ -36,13 +38,13 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 
 func TestMakeTreeFromTextSingleChar(t *testing.T) {
 	b := []byte{0}
-	err := ioutil.WriteFile(".test", b, 0644)
+	err := ioutil.WriteFile(filename, b, 0644)
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.Remove(".test")
+	defer os.Remove(filename)
 
-	tree, err := MakeTreeFromText(".test")
+	tree, err := MakeTreeFromText(filename)
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
@@ -56,13 +58,13 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 
 func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 	b := []byte{0, 0}
-	err := ioutil.WriteFile(".test", b, 0644)
+	err := ioutil.WriteFile(filename, b, 0644)
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.Remove(".test")
+	defer os.Remove(filename)
 	
-	tree, err := MakeTreeFromText(".test")
+	tree, err := MakeTreeFromText(filename)
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
@@ -76,13 +78,13 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 
 func TestMakeTreeFromTextBasicTree(t *testing.T) {
 	b := []byte{0, 0, 2}
-	err := ioutil.WriteFile(".test", b, 0644)
+	err := ioutil.WriteFile(filename, b, 0644)
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.Remove(".test")
+	defer os.Remove(filename)
 	
-	tree, err := MakeTreeFromText(".test")
+	tree, err := MakeTreeFromText(filename)
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
@@ -103,13 +105,13 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 
 func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 	b := []byte{0, 0, 1, 1, 2, 2, 2}
-	err := ioutil.WriteFile(".test", b, 0644)
+	err := ioutil.WriteFile(filename, b, 0644)
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.Remove(".test")
+	defer os.Remove(filename)
 	
-	tree, err := MakeTreeFromText(".test")
+	tree, err := MakeTreeFromText(filename)
 	if err != nil {
 		t.Error("Got non-nil error from MakeTreeFromText: ", err)
 	}
