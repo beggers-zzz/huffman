@@ -4,13 +4,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/BenedictEggers/huffman/huffTree"
 	"os"
-	"fmt"
 )
 
 // This will be the actual program to use the huffman tree to encode and decode
-// files. It will accept a command-line argument giving it a file name, and 
+// files. It will accept a command-line argument giving it a file name, and
 // flags to tell it what to with that file (encode, or decode).
 
 func main() {
