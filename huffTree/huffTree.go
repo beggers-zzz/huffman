@@ -47,11 +47,11 @@ func (t *HuffTree) WriteToFile(filename string) (err error) {
 
 // makeTreeFromText takes in a text file and turns it into a HuffTree, which
 // it then returns.
-func MakeTreeFromText(filename string) (t HuffTree, err error) {
+func MakeTreeFromText(filename string) (t *HuffTree, err error) {
 	// Read the text byte-by-byte, building up a map of byte counts
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return HuffTree{}, err
+		return nil, err
 	}
 
 	// Scan the byte slice "buf" and count how many times each byte shows up
@@ -73,15 +73,15 @@ func MakeTreeFromText(filename string) (t HuffTree, err error) {
 
 // makeTreeFromTreeFile takes in a filname of a file in the same format TREE.writeToFile()
 // puts out, and remakes a HuffTree from it.
-func MakeTreeFromTreeFile(filename string) (t HuffTree, err error) {
-	return HuffTree{}, errors.New("Undefined method")
+func MakeTreeFromTreeFile(filename string) (t *HuffTree, err error) {
+	return &HuffTree{}, errors.New("Undefined method")
 }
 
 // makeTreeFromNodeSlice makes a huffman tree from the passed slice of huffNodes.
 // If len(nodes) == 0, returns a nil tree.
-func makeTreeFromNodeSlice(nodes []*huffNode) (t HuffTree, err error) {
+func makeTreeFromNodeSlice(nodes []*huffNode) (t *HuffTree, err error) {
 	if len(nodes) == 0 {
-		return HuffTree{}, errors.New("Invalid node slice.")
+		return nil, errors.New("Invalid node slice.")
 	}
 
 	// We're going to put the nodes in a heap, with low-ness determined
@@ -113,5 +113,5 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t HuffTree, err error) {
 	}
 
 	// Great, now there's only one node and it's the root of the tree!
-	return HuffTree{heap.Pop(nh).(*huffNode)}, nil
+	return &HuffTree{heap.Pop(nh).(*huffNode)}, nil
 }
