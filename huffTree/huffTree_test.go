@@ -30,9 +30,8 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 		t.Error("Got nil error from MakeTreeFromText! Should be 'Text file empty'")
 	}
 
-	root := tree.root
-	if root != nil {
-		t.Error("Got non-nil root.")
+	if tree != nil {
+		t.Error("Got non-nil tree.")
 	}
 }
 
@@ -151,8 +150,7 @@ func TestMakeTreeFromNodesEmpty(t *testing.T) {
 		t.Error("Got nil error when we shouldn't have.")
 	}
 
-	root := tree.root
-	if root != nil {
+	if tree != nil {
 		t.Error("Got non-nil root.")
 	}
 }
