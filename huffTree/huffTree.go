@@ -22,15 +22,31 @@ type HuffTree struct {
 
 // decode turns the bytes in fromFile into bytes in toFile, decompressed under
 // the tree it is called on. On success, returns a nil error and returns a
-// non-nil error otherwise.
-func (t *HuffTree) Decode(fromFile, toFile string) (err error) {
-	return errors.New("Undefined method")
+// non-nil error otherwise. If fromFile exists before the call, it is deleted
+// and replaced with the decompressed file.
+func (t *HuffTree) DecodeText(fromFile, toFile string) (err error) {
+	// Get our stuff
+	encoded, err := ioutil.ReadFile(fromFile)
+	if err != nil {
+		return err
+	}
+
+	// And open up our file to write to
+	outFile, err := os.Create(toFile)
+	if err != nil {
+		return err
+	}
+
+	// Decode our bits, writing them out to disk every 1,000 bytes so as not
+	// to use up all of main memory
+	toWrite := make([]byte, 1000)
+	
 }
 
 // encode turns the bytes in fromFile into bytes in toFile, compressed under
 // the tree it is called on. On success, returns a nil error and returns a
 // non-nil error otherwise.
-func (t *HuffTree) Encode(fromFile, toFile string) (err error) {
+func (t *HuffTree) EncodeText(fromFile, toFile string) (err error) {
 	return errors.New("Undefined method")
 }
 
