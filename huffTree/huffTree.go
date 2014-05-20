@@ -57,28 +57,91 @@ func makeTreeFromText(filename string) (t *HuffTree, err error) {
 		nodes = append(nodes, node)
 	}
 
-	// And make a tree
-	return makeTreeFromNodeSlice(nodes)
+	if len(nodes) == 0 {
+		return nil, errors.New("Invalid node slice.")
+	}
+
+	// We're going to put the nodes in a heap, with low-ness determined
+	// by the nodes' counts.
+	nh := &nodeHeap{}
+	heap.Init(nh)
+	for _, node := range nodes {
+		heap.Push(nh, node)
+	}
+
+	// Now, we're going to do the following:
+	//
+	// Until there's only one node in the heap:
+	// 		Remove the lowest-count two nodes
+	// 		Make a new node with those two as children, whose count is the
+	//			sum of its childrens' counts
+	//		Add that new node to the heap
+	//
+	// This will create an optimally-balanced tree, based on byte counts. For
+	// more information, see http://en.wikipedia.org/wiki/Huffman_coding.
+	for nh.Len() > 1 {
+		nodeOne := heap.Pop(nh).(*huffNode)
+		nodeTwo := heap.Pop(nh).(*huffNode)
+		newNode := &huffNode{char: 255, // random char
+			count: nodeOne.count + nodeTwo.count,
+			left:  nodeOne,
+			right: nodeTwo}
+		heap.Push(nh, newNode)
+	}
+
+	// Great, now there's only one node and it's the root of the tree!
+	return &HuffTree{heap.Pop(nh).(*huffNode)}, nil
+
 }
 
 // Write the tree out to a file at a file described by the passed string.
 // Will be called by EncodeText to write the tree out to the beginning
 // of the encoded file.
-func (t *HuffTree) writeToFile(File *file) (err error) {
+func (t *HuffTree) writeTreeToFile(file *os.File) (err error) {
 	return errors.New("Undefined method")
+}
+
+// writeEncodedTextToFile encodes the text in the passed file under the HuffTree
+// it was called on, and writes out the encoded bits to the passed file. Is called
+// by EncodeText. Returns a non-nil error on failure, nil otherwise.
+func (t *HuffTree) writeEncodedTextToFile(fromFile string, toFile *os.File) (err error) {
+	return errors.New("Not yet implemented")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //               Stuff to decode a file
 ////////////////////////////////////////////////////////////////////////////////
 
-// decode turns the bytes in fromFile into bytes in toFile, decompressed under
+// DecodeText turns the bytes in fromFile into bytes in toFile, decompressed under
 // the tree it is called on. On success, returns a nil error and returns a
 // non-nil error otherwise. If fromFile exists before the call, it is deleted
 // and replaced with the decompressed file.
 func DecodeText(fromFile, toFile string) (err error) {
+	// Open up the encoded file
+	encoded, err:= os.Open(fromFile)
+	if err != nil {
+		return err
+	}
+
+	// Make the tree
+	t, err := makeTreeFromTreeFile(encoded)
+	if err != nil {
+		return err
+	}
+
+	// And write it
+	return t.writeDecodedText(encoded, toFile)
+}
+
+// makeTreeFromTreeFile takes in a filname of a file in the same format TREE.writeToFile()
+// puts out, and remakes a HuffTree from it.
+func makeTreeFromTreeFile(file *os.File) (t *HuffTree, err error) {
+	return &HuffTree{}, errors.New("Undefined method")
+}
+
+func (t *HuffTree) writeDecodedText(fromFile *os.File, toFile string) (err error) {
 	// Set up a BitReader on the file to decodes
-	reader, err := bitIO.NewReader(fromFile)
+	reader, err := bitIO.NewReader(toFile)
 	if err != nil {
 		return err
 	}
@@ -137,55 +200,6 @@ func DecodeText(fromFile, toFile string) (err error) {
 		}
 	}
 
-	// Great, we're done
-	return outFile.Close()
-}
-
-// makeTreeFromTreeFile takes in a filname of a file in the same format TREE.writeToFile()
-// puts out, and remakes a HuffTree from it.
-func makeTreeFromTreeFile(File *f) (t *HuffTree, err error) {
-	return &HuffTree{}, errors.New("Undefined method")
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//               Helper function to make the tree.
-////////////////////////////////////////////////////////////////////////////////
-
-// makeTreeFromNodeSlice makes a huffman tree from the passed slice of huffNodes.
-// If len(nodes) == 0, returns a nil tree.
-func makeTreeFromNodeSlice(nodes []*huffNode) (t *HuffTree, err error) {
-	if len(nodes) == 0 {
-		return nil, errors.New("Invalid node slice.")
-	}
-
-	// We're going to put the nodes in a heap, with low-ness determined
-	// by the nodes' counts.
-	nh := &nodeHeap{}
-	heap.Init(nh)
-	for _, node := range nodes {
-		heap.Push(nh, node)
-	}
-
-	// Now, we're going to do the following:
-	//
-	// Until there's only one node in the heap:
-	// 		Remove the lowest-count two nodes
-	// 		Make a new node with those two as children, whose count is the
-	//			sum of its childrens' counts
-	//		Add that new node to the heap
-	//
-	// This will create an optimally-balanced tree, based on byte counts. For
-	// more information, see http://en.wikipedia.org/wiki/Huffman_coding.
-	for nh.Len() > 1 {
-		nodeOne := heap.Pop(nh).(*huffNode)
-		nodeTwo := heap.Pop(nh).(*huffNode)
-		newNode := &huffNode{char: 255, // random char
-			count: nodeOne.count + nodeTwo.count,
-			left:  nodeOne,
-			right: nodeTwo}
-		heap.Push(nh, newNode)
-	}
-
-	// Great, now there's only one node and it's the root of the tree!
-	return &HuffTree{heap.Pop(nh).(*huffNode)}, nil
+	// Great, we made it
+	return nil
 }
