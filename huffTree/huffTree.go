@@ -6,6 +6,7 @@ package huffTree
 import (
 	"container/heap"
 	"errors"
+	"github.com/BenedictEggers/bitIO"
 	"io/ioutil"
 )
 
@@ -25,8 +26,8 @@ type HuffTree struct {
 // non-nil error otherwise. If fromFile exists before the call, it is deleted
 // and replaced with the decompressed file.
 func (t *HuffTree) DecodeText(fromFile, toFile string) (err error) {
-	// Get our stuff
-	encoded, err := ioutil.ReadFile(fromFile)
+	// Set up a BitReader on the file to decodes
+	reader, err := bitIO.NewReader(fromFile)
 	if err != nil {
 		return err
 	}
@@ -40,7 +41,39 @@ func (t *HuffTree) DecodeText(fromFile, toFile string) (err error) {
 	// Decode our bits, writing them out to disk every 1,000 bytes so as not
 	// to use up all of main memory
 	toWrite := make([]byte, 1000)
-	
+	currentIndex := 0
+	bit, err := reader.ReadBit() // get the first bit
+
+	// until we reach the end of the file...
+	for err != nil {
+
+		// Read out 1,000 bytes' worth of compressed data
+		for currentIndex < len(toWrite) {
+			// Process the current bit
+			
+
+			// And read a new bit
+			bit, err = reader.ReadBit()
+			if err != nil {
+				return err
+			}
+		}
+
+		// Write our bytes
+		_, err = outFile.Write(toWrite)
+		if err != nil {
+			return err
+		}
+
+		// Re-zero our slice (so the last write won't write extra stuff)
+		toWrite = make([]byte, len(toWrite))
+
+		// And try to read another bit, so the loop will exit if we're at the EOF
+		bit, err = reader.ReadBit()
+	}
+
+	// Great, we're done
+	return nil
 }
 
 // encode turns the bytes in fromFile into bytes in toFile, compressed under
