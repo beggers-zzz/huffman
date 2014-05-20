@@ -24,18 +24,18 @@ type HuffTree struct {
 // a string representing the decoded File. If the decode fails (wrong tree, some
 // file read error, etc) the value of the returned string is undefined but error
 // will be non-nil.
-func (t *HuffTree) Decode(filename string) (decoded string, err error) {
-	return "", errors.New("Undefined method")
+func (t *HuffTree) Decode(fromFile, toFile string) (err error) {
+	return errors.New("Undefined method")
 }
 
 // // encode turns the bytes in fromFile into bytes in toFile, compressed under
 // // the tree it is called on. On success, returns a nil error and returns a
-// // non-nill error otherwise.
-func (t *HuffTree) Encode(fromFile string, toFile string) (err error) {
+// // non-nil error otherwise.
+func (t *HuffTree) Encode(fromFile, toFile string) (err error) {
 	return errors.New("Undefined method")
 }
 
-// // Write the tree out to a file at the point the file is currently seek-ed to.
+// // Write the tree out to a file at a file described by the passed string.
 // // Necessary to keep around if you plan on decoding files :)
 func (t *HuffTree) WriteToFile(filename string) (err error) {
 	return errors.New("Undefined method")
