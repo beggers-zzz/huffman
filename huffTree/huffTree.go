@@ -41,39 +41,53 @@ func (t *HuffTree) DecodeText(fromFile, toFile string) (err error) {
 	// Decode our bits, writing them out to disk every 1,000 bytes so as not
 	// to use up all of main memory
 	toWrite := make([]byte, 1000)
-	currentIndex := 0
-	bit, err := reader.ReadBit() // get the first bit
+	bytesWritten := 0
+	current := t.root
 
 	// until we reach the end of the file...
-	for err != nil {
+	for current.char != 0 {
 
-		// Read out 1,000 bytes' worth of compressed data
-		for currentIndex < len(toWrite) {
-			// Process the current bit
-			
-
-			// And read a new bit
-			bit, err = reader.ReadBit()
-			if err != nil {
-				return err
-			}
-		}
-
-		// Write our bytes
-		_, err = outFile.Write(toWrite)
+		// Read a bit
+		bit, err := reader.ReadBit()
 		if err != nil {
 			return err
 		}
 
-		// Re-zero our slice (so the last write won't write extra stuff)
-		toWrite = make([]byte, len(toWrite))
+		if current.left == nil && current.right == nil {
+			// We're at a leaf node, write out its character
+			toWrite[bytesWritten] = current.char
+			bytesWritten++
+			current = t.root
+		}
 
-		// And try to read another bit, so the loop will exit if we're at the EOF
-		bit, err = reader.ReadBit()
+		if bytesWritten == len(toWrite) {
+			// Time to flush our buffer and reset
+			_, err = outFile.Write(toWrite)
+			if err != nil {
+				return nil
+			}
+		}
+
+		if bit == 0 {
+			current = current.left
+		} else if bit == 1 {
+			current = current.right
+		} else {
+			// Should never happen
+			return Errors.new("Got invalid bit")
+		}
+	}
+
+	// We've terminated, but might still need to write some bytes
+	if bytesWritten != len(b) {
+		_, err = outFile.Write(toWrite)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Great, we're done
-	return nil
+	return outFile.Close()
 }
 
 // encode turns the bytes in fromFile into bytes in toFile, compressed under
@@ -153,7 +167,7 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t *HuffTree, err error) {
 	for nh.Len() > 1 {
 		nodeOne := heap.Pop(nh).(*huffNode)
 		nodeTwo := heap.Pop(nh).(*huffNode)
-		newNode := &huffNode{char: 0,
+		newNode := &huffNode{char: 255, // random char
 			count: nodeOne.count + nodeTwo.count,
 			left:  nodeOne,
 			right: nodeTwo}
