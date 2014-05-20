@@ -22,7 +22,6 @@ type HuffTree struct {
 	root *huffNode
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //               Stuff to encode a file
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +60,17 @@ func makeTreeFromText(filename string) (t *HuffTree, err error) {
 		return nil, errors.New("Invalid node slice.")
 	}
 
+	return makeTreeFromNodeSlice(nodes)
+}
+
+// Makes a tree from a slice of huffNodes, with the lowest-count nodes
+// going farthest from the root. Returns a non-nil error on failure, nil
+// error otherwise. Returns the created tree. If nodes is empty, returns
+// an error.
+func makeTreeFromNodeSlice(nodes []*huffNode) (t *HuffTree, err error) {
+	if len(nodes) == 0 {
+		return nil, errors.New("Too few elements!")
+	}
 	// We're going to put the nodes in a heap, with low-ness determined
 	// by the nodes' counts.
 	nh := &nodeHeap{}
@@ -91,7 +101,6 @@ func makeTreeFromText(filename string) (t *HuffTree, err error) {
 
 	// Great, now there's only one node and it's the root of the tree!
 	return &HuffTree{heap.Pop(nh).(*huffNode)}, nil
-
 }
 
 // Write the tree out to a file at a file described by the passed string.
@@ -118,7 +127,7 @@ func (t *HuffTree) writeEncodedTextToFile(fromFile string, toFile *os.File) (err
 // and replaced with the decompressed file.
 func DecodeText(fromFile, toFile string) (err error) {
 	// Open up the encoded file
-	encoded, err:= os.Open(fromFile)
+	encoded, err := os.Open(fromFile)
 	if err != nil {
 		return err
 	}
