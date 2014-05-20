@@ -8,6 +8,7 @@ import (
 	"errors"
 	"github.com/BenedictEggers/bitIO"
 	"io/ioutil"
+	"os"
 )
 
 // The actual Huffman Tree and all associated functions. Will build up a
@@ -21,11 +22,61 @@ type HuffTree struct {
 	root *huffNode
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//               Stuff to encode a file
+////////////////////////////////////////////////////////////////////////////////
+
+// EncodeText turns the bytes in fromFile into bytes in toFile, compressed under
+// a tree created on the file. On success, returns a nil error and returns a
+// non-nil error otherwise.
+func EncodeText(fromFile, toFile string) (err error) {
+	return errors.New("Undefined method")
+}
+
+// makeTreeFromText takes in a text file and turns it into a HuffTree, which
+// it then returns. Will be called by EncodeText to build the tree before
+// trying to encode the text.
+func makeTreeFromText(filename string) (t *HuffTree, err error) {
+	// Read the text byte-by-byte, building up a map of byte counts
+	buf, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	// Scan the byte slice "buf" and count how many times each byte shows up
+	counts := map[byte]uint32{}
+	for _, elem := range buf {
+		counts[elem] += 1
+	}
+
+	// Turn the counts into huffNodes
+	nodes := make([]*huffNode, 0)
+	for currentByte, byteCount := range counts {
+		node := &huffNode{char: currentByte, count: byteCount}
+		nodes = append(nodes, node)
+	}
+
+	// And make a tree
+	return makeTreeFromNodeSlice(nodes)
+}
+
+// Write the tree out to a file at a file described by the passed string.
+// Will be called by EncodeText to write the tree out to the beginning
+// of the encoded file.
+func (t *HuffTree) writeToFile(filename string) (err error) {
+	return errors.New("Undefined method")
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//               Stuff to decode a file
+////////////////////////////////////////////////////////////////////////////////
+
 // decode turns the bytes in fromFile into bytes in toFile, decompressed under
 // the tree it is called on. On success, returns a nil error and returns a
 // non-nil error otherwise. If fromFile exists before the call, it is deleted
 // and replaced with the decompressed file.
-func (t *HuffTree) DecodeText(fromFile, toFile string) (err error) {
+func DecodeText(fromFile, toFile string) (err error) {
 	// Set up a BitReader on the file to decodes
 	reader, err := bitIO.NewReader(fromFile)
 	if err != nil {
@@ -74,12 +125,12 @@ func (t *HuffTree) DecodeText(fromFile, toFile string) (err error) {
 			current = current.right
 		} else {
 			// Should never happen
-			return Errors.new("Got invalid bit")
+			return errors.New("Got invalid bit")
 		}
 	}
 
 	// We've terminated, but might still need to write some bytes
-	if bytesWritten != len(b) {
+	if bytesWritten != len(toWrite) {
 		_, err = outFile.Write(toWrite)
 		if err != nil {
 			return err
@@ -90,54 +141,15 @@ func (t *HuffTree) DecodeText(fromFile, toFile string) (err error) {
 	return outFile.Close()
 }
 
-// encode turns the bytes in fromFile into bytes in toFile, compressed under
-// the tree it is called on. On success, returns a nil error and returns a
-// non-nil error otherwise.
-func (t *HuffTree) EncodeText(fromFile, toFile string) (err error) {
-	return errors.New("Undefined method")
-}
-
-// Write the tree out to a file at a file described by the passed string.
-// Necessary to keep around if you plan on decoding files :)
-func (t *HuffTree) WriteToFile(filename string) (err error) {
-	return errors.New("Undefined method")
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//               Functions to make the tree.
-////////////////////////////////////////////////////////////////////////////////
-
-// makeTreeFromText takes in a text file and turns it into a HuffTree, which
-// it then returns.
-func MakeTreeFromText(filename string) (t *HuffTree, err error) {
-	// Read the text byte-by-byte, building up a map of byte counts
-	buf, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	// Scan the byte slice "buf" and count how many times each byte shows up
-	counts := map[byte]uint32{}
-	for _, elem := range buf {
-		counts[elem] += 1
-	}
-
-	// Turn the counts into huffNodes
-	nodes := make([]*huffNode, 0)
-	for currentByte, byteCount := range counts {
-		node := &huffNode{char: currentByte, count: byteCount}
-		nodes = append(nodes, node)
-	}
-
-	// And make a tree
-	return makeTreeFromNodeSlice(nodes)
-}
-
 // makeTreeFromTreeFile takes in a filname of a file in the same format TREE.writeToFile()
 // puts out, and remakes a HuffTree from it.
-func MakeTreeFromTreeFile(filename string) (t *HuffTree, err error) {
+func makeTreeFromTreeFile(filename string) (t *HuffTree, err error) {
 	return &HuffTree{}, errors.New("Undefined method")
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//               Helper function to make the tree.
+////////////////////////////////////////////////////////////////////////////////
 
 // makeTreeFromNodeSlice makes a huffman tree from the passed slice of huffNodes.
 // If len(nodes) == 0, returns a nil tree.
