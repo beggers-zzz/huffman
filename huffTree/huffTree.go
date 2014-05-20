@@ -64,7 +64,7 @@ func makeTreeFromText(filename string) (t *HuffTree, err error) {
 // Write the tree out to a file at a file described by the passed string.
 // Will be called by EncodeText to write the tree out to the beginning
 // of the encoded file.
-func (t *HuffTree) writeToFile(filename string) (err error) {
+func (t *HuffTree) writeToFile(File *file) (err error) {
 	return errors.New("Undefined method")
 }
 
@@ -143,7 +143,7 @@ func DecodeText(fromFile, toFile string) (err error) {
 
 // makeTreeFromTreeFile takes in a filname of a file in the same format TREE.writeToFile()
 // puts out, and remakes a HuffTree from it.
-func makeTreeFromTreeFile(filename string) (t *HuffTree, err error) {
+func makeTreeFromTreeFile(File *f) (t *HuffTree, err error) {
 	return &HuffTree{}, errors.New("Undefined method")
 }
 
