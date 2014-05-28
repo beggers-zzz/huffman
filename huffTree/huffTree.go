@@ -30,7 +30,32 @@ type HuffTree struct {
 // a tree created on the file. On success, returns a nil error and returns a
 // non-nil error otherwise.
 func EncodeText(fromFile, toFile string) (err error) {
-	return errors.New("Undefined method")
+	// Make a tree from the file
+	tree, err := makeTreeFromText(fromFile)
+	if err != nil {
+		return err
+	}
+
+	// Open up our file to write
+	openFile, err := os.Create(toFile)
+	if err != nil {
+		return err
+	}
+
+	// Write the tree to the file
+	err = tree.writeToFile(openFile)
+	if err != nil {
+		return err
+	}
+
+	// Encode the actual stuff and write it out
+	err = t.writeEncodedText(fromFile, openFile)
+	if err != nil {
+		return err
+	}
+
+	// Then return (writeEncodedText closes the file, so we won't deal with it)
+	return nil
 }
 
 // makeTreeFromText takes in a text file and turns it into a HuffTree, which
@@ -106,14 +131,14 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t *HuffTree, err error) {
 // Write the tree out to a file at a file described by the passed string.
 // Will be called by EncodeText to write the tree out to the beginning
 // of the encoded file.
-func (t *HuffTree) writeTreeToFile(file *os.File) (err error) {
+func (t *HuffTree) writeToFile(file *os.File) (err error) {
 	return errors.New("Undefined method")
 }
 
 // writeEncodedTextToFile encodes the text in the passed file under the HuffTree
 // it was called on, and writes out the encoded bits to the passed file. Is called
 // by EncodeText. Returns a non-nil error on failure, nil otherwise.
-func (t *HuffTree) writeEncodedTextToFile(fromFile string, toFile *os.File) (err error) {
+func (t *HuffTree) writeEncodedText(fromFile string, toFile *os.File) (err error) {
 	return errors.New("Not yet implemented")
 }
 
