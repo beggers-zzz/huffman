@@ -9,6 +9,7 @@ import (
 	"github.com/BenedictEggers/bitIO"
 	"io/ioutil"
 	"os"
+	"bytes"
 )
 
 // The actual Huffman Tree and all associated functions. Will build up a
@@ -172,6 +173,16 @@ func DecodeText(fromFile, toFile string) (err error) {
 		return err
 	}
 
+	integrityCheck := make([]byte, len(magicBytes)) // to store the first few bytes
+	_, err = encoded.Read(integrityCheck)
+	if err != nil {
+		return err
+	}
+
+	if !bytes.Equal(integrityCheck, magicBytes[:]) {
+		// File is corrupted
+		return errors.New("Corrupted file")
+	}
 
 	// Make the tree
 	t, err := makeTreeFromTreeFile(encoded)
