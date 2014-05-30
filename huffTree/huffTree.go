@@ -46,6 +46,12 @@ func EncodeText(fromFile, toFile string) (err error) {
 		return err
 	}
 
+	// Set up the write cursor to be in the correct position
+	_, err = openFile.Seek(int64(len(magicBytes)), 0)
+	if err != nil {
+		return err
+	}
+
 	// Write the tree to the file
 	err = tree.writeToFile(openFile)
 	if err != nil {
