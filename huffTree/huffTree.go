@@ -22,6 +22,9 @@ type HuffTree struct {
 	root *huffNode
 }
 
+// Will be written at the beginning of every encoded file for integrity check
+MAGIC_BYTES := 0xd00db00b
+
 ////////////////////////////////////////////////////////////////////////////////
 //               Stuff to encode a file
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +53,21 @@ func EncodeText(fromFile, toFile string) (err error) {
 
 	// Encode the actual stuff and write it out
 	err = t.writeEncodedText(fromFile, openFile)
+	if err != nil {
+		return err
+	}
+
+	// Now write our "magic bytes" at the beginning so we can check
+	// when Decode() is called if the tree is valid
+	offset, err := openFile.Seek(0, 0)
+	if err != nil {
+		return err
+	}
+	if offset != 0 {
+		return errors.New("Weird offset returned, bailing")
+	}
+
+	err = openFile.Write(MAGIC_BYTES)
 	if err != nil {
 		return err
 	}
