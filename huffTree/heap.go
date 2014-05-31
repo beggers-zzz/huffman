@@ -1,9 +1,9 @@
 // Ben Eggers
 // GNU GPL'd
 
-// Heap for use with the Huffman Tree
 package huffTree
 
+// Heap for use with the Huffman Tree
 type nodeHeap []*huffNode
 
 func (nh nodeHeap) Len() int { return len(nh) }

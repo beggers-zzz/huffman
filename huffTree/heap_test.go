@@ -1,9 +1,9 @@
 // Ben Eggers
 // GNU GPL'd
 
-// Tests the heap
 package huffTree
 
+// Tests the heap
 import (
 	"container/heap"
 	"testing"
