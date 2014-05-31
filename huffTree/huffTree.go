@@ -196,7 +196,7 @@ func DecodeText(fromFile, toFile string) (err error) {
 		return err
 	}
 
-	// And write it
+	// And decode the rest of the file
 	return t.writeDecodedText(encoded, toFile)
 }
 
