@@ -168,44 +168,33 @@ func (t *HuffTree) writeEncodedText(fromFile string, toFile *os.File) (err error
 // be entirely 0s and 1s (in string form). If a byte b maps to a string s, that
 // means that the encoded representation of b will be s, but as bytes, not as
 // a string.
-func (t *HuffTree) getByteMap() (characters map[byte]string, err error) {
-	err = getByteMapRecursiveHelper(t.root, "", characters)
-	return characters, err
+func (t *HuffTree) getByteMap() (characters map[byte]string) {
+	getByteMapRecursiveHelper(t.root, "", characters)
+	return characters
 }
 
 // Helper function for getByteMap(). See above/below
-func getByteMapRecursiveHelper(cur *huffNode, soFarStr string,
-	soFarMap map[byte]string) (err error) {
+func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte]string) {
 	// We're going to do a pre-order traversal of the tree, building up (and
 	// sometimes, tearing down) a string--it will be 0 if we went left, 1 if
 	// we went right. When we reach a leaf node, we'll add it's character to the
 	// map, mapping to the current string
 
+	if cur == nil {
+		// nothing to see here
+		return
+	}
+
 	// are we at a leaf node?
 	if cur.right == nil && cur.left == nil {
 		// yep
 		soFarMap[cur.char] = soFarStr
-		return nil
+		return
 	}
 
 	// Nope, need to keep recursing. First set up our map
-	if cur.left != nil {
-		err = getByteMapRecursiveHelper(cur.left, soFarStr+"0", soFarMap)
-		if err != nil {
-			// oh no!
-			return err
-		}
-	}
-
-	if cur.right != nil {
-		err = getByteMapRecursiveHelper(cur.right, soFarStr+"1", soFarMap)
-		if err != nil {
-			// oh no!
-			return err
-		}
-	}
-
-	return nil
+	getByteMapRecursiveHelper(cur.left, soFarStr+"0", soFarMap)
+	getByteMapRecursiveHelper(cur.right, soFarStr+"1", soFarMap)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
