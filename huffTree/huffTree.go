@@ -305,7 +305,7 @@ func (t *HuffTree) writeDecodedText(fromFile *os.File, toFile string) (err error
 
 	// We've terminated, but might still need to write some bytes
 	if bytesWritten != len(toWrite) {
-		_, err = outFile.Write(toWrite)
+		_, err = outFile.Write(toWrite[0:bytesWritten])
 		if err != nil {
 			return err
 		}
