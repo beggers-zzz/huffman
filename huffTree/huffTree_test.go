@@ -243,7 +243,7 @@ func TestGetByteMapSeveralBytes(t *testing.T) {
 
 	bytes := root.getByteMap()
 	if len(bytes) != 3 {
-		t.Error("Wrong number of bytes in byteCount map!")
+		t.Error("Wrong number of bytes in byteCount map:", len(bytes))
 	}
 
 	if bytes[122] != "0" {
@@ -256,6 +256,42 @@ func TestGetByteMapSeveralBytes(t *testing.T) {
 
 	if bytes[120] != "10" {
 		t.Error("Wrong bit pattern for byte 120. Got:", bytes[120])
+	}
+}
+
+func TestGetByteMapManyBytes(t *testing.T) {
+	nodes := []*huffNode{{char: 120, count: 1},
+		{char: 121, count: 2},
+		{char: 122, count: 4},
+		{char: 123, count: 8},
+		{char: 124, count: 16}}
+
+	root, err := makeTreeFromNodeSlice(nodes)
+	errorIfNecessary(t, err)
+
+	bytes := root.getByteMap()
+	if len(bytes) != 5 {
+		t.Error("Wrong number of bytes in byteCount map:", len(bytes))
+	}
+
+	if bytes[124] != "1" {
+		t.Error("Wrong bit pattern for byte 120. Got:", bytes[124])
+	}
+
+	if bytes[123] != "01" {
+		t.Error("Wrong bit pattern for byte 121. Got:", bytes[123])
+	}
+
+	if bytes[122] != "001" {
+		t.Error("Wrong bit pattern for byte 120. Got:", bytes[122])
+	}
+
+	if bytes[121] != "0001" {
+		t.Error("Wrong bit pattern for byte 121. Got:", bytes[121])
+	}
+
+	if bytes[120] != "0000" {
+		t.Error("Wrong bit pattern for byte 122. Got:", bytes[120])
 	}
 }
 
