@@ -169,6 +169,10 @@ func (t *HuffTree) writeEncodedText(fromFile string, toFile *os.File) (err error
 // means that the encoded representation of b will be s, but as bytes, not as
 // a string.
 func (t *HuffTree) getByteMap() (characters map[byte]string, err error) {
+	// We're going to do a pre-order traversal of the tree, building up (and
+	// sometimes, tearing down) a string--it will be 0 if we went left, 1 if
+	// we went right. When we reach a leaf node, we'll add it's character to the
+	// map, mapping to the current string
 	
 }
 
