@@ -174,7 +174,8 @@ func (t *HuffTree) getByteMap() (characters map[byte]string, err error) {
 }
 
 // Helper function for getByteMap(). See above/below
-func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte]string) (err error) {
+func getByteMapRecursiveHelper(cur *huffNode, soFarStr string,
+	soFarMap map[byte]string) (err error) {
 	// We're going to do a pre-order traversal of the tree, building up (and
 	// sometimes, tearing down) a string--it will be 0 if we went left, 1 if
 	// we went right. When we reach a leaf node, we'll add it's character to the
