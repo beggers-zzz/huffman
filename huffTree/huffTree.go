@@ -83,8 +83,8 @@ func EncodeText(fromFile, toFile string) (err error) {
 	return nil
 }
 
-// makeTreeFromText takes in a text file and turns it into a HuffTree, which
-// it then returns. Will be called by EncodeText to build the tree before
+// makeTreeFromText takes in a text file and creats a huffman tree over the characters
+// in it, which it then returns. Will be called by EncodeText to build the tree before
 // trying to encode the text.
 func makeTreeFromText(filename string) (t *huffNode, err error) {
 	// Read the text byte-by-byte, building up a map of byte counts
@@ -113,10 +113,10 @@ func makeTreeFromText(filename string) (t *huffNode, err error) {
 	return makeTreeFromNodeSlice(nodes)
 }
 
-// Makes a tree from a slice of huffNodes, with the lowest-count nodes
-// going farthest from the root. Returns a non-nil error on failure, nil
-// error otherwise. Returns the created tree. If nodes is empty, returns
-// an error.
+// makeTreeFromNodeSlice makes a tree from a slice of huffNodes, with the
+// lowest-count nodes going farthest from the root. Returns a non-nil error
+// on failure, nil error otherwise. Returns the created tree. If nodes is empty,
+// returns an error.
 func makeTreeFromNodeSlice(nodes []*huffNode) (t *huffNode, err error) {
 	if len(nodes) == 0 {
 		return nil, errors.New("Too few elements!")
@@ -153,14 +153,14 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t *huffNode, err error) {
 	return heap.Pop(nh).(*huffNode), nil
 }
 
-// Write the tree out to a file at a file described by the passed string.
+// writeToFile writes the tree out to the passed os.File.
 // Will be called by EncodeText to write the tree out to the beginning
 // of the encoded file.
 func (t *huffNode) writeToFile(file *os.File) (err error) {
 	return errors.New("Undefined method")
 }
 
-// writeEncodedTextToFile encodes the text in the passed file under the HuffTree
+// writeEncodedTextToFile encodes the text in the passed file under the tree
 // it was called on, and writes out the encoded bits to the passed file. Is called
 // by EncodeText. Returns a non-nil error on failure, nil otherwise.
 func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error) {
@@ -205,8 +205,8 @@ func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte
 ////////////////////////////////////////////////////////////////////////////////
 
 // DecodeText turns the bytes in fromFile into bytes in toFile, decompressed under
-// the tree it is called on. On success, returns a nil error and returns a
-// non-nil error otherwise. If fromFile exists before the call, it is deleted
+// the tree at the beginning of the file. On success, returns a nil error. Else, 
+// returns a non-nil error. If fromFile exists before the call, it is deleted
 // and replaced with the decompressed file.
 func DecodeText(fromFile, toFile string) (err error) {
 	// Open up the encoded file
@@ -233,15 +233,24 @@ func DecodeText(fromFile, toFile string) (err error) {
 	}
 
 	// And decode the rest of the file
-	return t.writeDecodedText(encoded, toFile)
+	err = t.writeDecodedText(encoded, toFile)
+	if err != nil {
+		return err
+	}
+
+	// close the file, and return
+	return encoded.Close()
 }
 
-// makeTreeFromTreeFile takes in a filname of a file in the same format TREE.writeToFile()
+// makeTreeFromTreeFile takes in a file in the same format TREE.writeToFile()
 // puts out, and remakes a HuffTree from it.
 func makeTreeFromTreeFile(file *os.File) (t *huffNode, err error) {
 	return nil, errors.New("Undefined method")
 }
 
+// writeDecodedText decompresses the bits in the passed file, and puts the decompressed
+// text into a new file described by toFile. If toFile exists before this is called,
+// it will be truncated. Returns a nil error on success, non-nil error otherwise.
 func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error) {
 	// Set up a BitReader on the file to decodes
 	reader, err := bitIO.NewReader(toFile)
@@ -249,16 +258,9 @@ func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error
 		return err
 	}
 
-	// And open up our file to write to
-	outFile, err := os.Create(toFile)
-	if err != nil {
-		return err
-	}
-
 	// Decode our bits, writing them out to disk every 1,000 bytes so as not
 	// to use up all of main memory
-	toWrite := make([]byte, 1000)
-	bytesWritten := 0
+	toWrite := make([]byte, 1)
 	current := t
 
 	// until we reach the end of the file...
@@ -272,17 +274,8 @@ func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error
 
 		if current.left == nil && current.right == nil {
 			// We're at a leaf node, write out its character
-			toWrite[bytesWritten] = current.char
-			bytesWritten++
+			toWrite = append(toWrite, current.char)
 			current = t
-		}
-
-		if bytesWritten == len(toWrite) {
-			// Time to flush our buffer and reset
-			_, err = outFile.Write(toWrite)
-			if err != nil {
-				return nil
-			}
 		}
 
 		if bit == 0 {
@@ -295,14 +288,6 @@ func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error
 		}
 	}
 
-	// We've terminated, but might still need to write some bytes
-	if bytesWritten != len(toWrite) {
-		_, err = outFile.Write(toWrite[0:bytesWritten])
-		if err != nil {
-			return err
-		}
-	}
-
-	// Great, we made it
-	return nil
+	// We've terminated, write it all out
+	return ioutil.WriteFile(toFile, toWrite, 0644)
 }
