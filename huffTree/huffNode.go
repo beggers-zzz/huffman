@@ -7,6 +7,5 @@ package huffTree
 type huffNode struct {
 	char  byte
 	count uint32
-	left  *huffNode
-	right *huffNode
+	left, right  *huffNode
 }

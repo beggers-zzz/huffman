@@ -169,7 +169,8 @@ func (t *HuffTree) writeEncodedText(fromFile string, toFile *os.File) (err error
 // means that the encoded representation of b will be s, but as bytes, not as
 // a string.
 func (t *HuffTree) getByteMap() (characters map[byte]string, err error) {
-	err = getByteMapRecursiveHelper(t.(*huffNode), "", characters)
+	err = getByteMapRecursiveHelper(t.root, "", characters)
+	return characters, err
 }
 
 // Helper function for getByteMap(). See above/below
@@ -188,7 +189,7 @@ func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte
 
 	// Nope, need to keep recursing. First set up our map
 	if cur.left != nil {
-		err := getByteMapRecursiveHelper(huffNode.left, soFar+"0", soFarMap)
+		err = getByteMapRecursiveHelper(cur.left, soFarStr+"0", soFarMap)
 		if err != nil {
 			// oh no!
 			return err
@@ -196,7 +197,7 @@ func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte
 	}
 
 	if cur.right != nil {
-		err := getByteMapRecursiveHelper(huffNode.right, soFar+"1", soFarMap)
+		err = getByteMapRecursiveHelper(cur.right, soFarStr+"1", soFarMap)
 		if err != nil {
 			// oh no!
 			return err
