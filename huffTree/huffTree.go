@@ -182,7 +182,6 @@ func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte
 	// sometimes, tearing down) a string--it will be 0 if we went left, 1 if
 	// we went right. When we reach a leaf node, we'll add it's character to the
 	// map, mapping to the current string
-
 	if cur == nil {
 		// nothing to see here
 		return
@@ -195,7 +194,7 @@ func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte
 		return
 	}
 
-	// Nope, need to keep recursing. First set up our map
+	// Nope, need to keep recursing.
 	getByteMapRecursiveHelper(cur.left, soFarStr+"0", soFarMap)
 	getByteMapRecursiveHelper(cur.right, soFarStr+"1", soFarMap)
 }
@@ -260,7 +259,7 @@ func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error
 
 	// Decode our bits, writing them out to disk every 1,000 bytes so as not
 	// to use up all of main memory
-	toWrite := make([]byte, 1)
+	toWrite := make([]byte, 0)
 	current := t
 
 	// until we reach the end of the file...
