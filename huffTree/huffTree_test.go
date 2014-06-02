@@ -198,7 +198,50 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 // getByteMap tests
 ////////////////////////////////////////////////////////////////////////////////
 
+func TestGetByteMapOneByte(t *testing.T) {
+	nodes := []*huffNode{{char: 120, count: 1}}
+		root, err := makeTreeFromNodeSlice(nodes)
+	errorIfNecessary(t, err)
 
+	bytes := root.getByteMap()
+
+	if len(bytes) != 1 {
+		t.Error("Wrong number of bytes in byteCount map:", len(bytes))
+	}
+
+	if bytes[120] != "" {
+		t.Error("Got non-empty string for only byte:", bytes[120])
+	}
+}
+
+func TestGetByteMapTwoBytes(t *testing.T) {
+
+}
+
+func TestGetByteMapSeveralBytes(t *testing.T) {
+	nodes := []*huffNode{{char: 120, count: 1},
+		{char: 121, count: 2},
+		{char: 122, count: 3}}
+	root, err := makeTreeFromNodeSlice(nodes)
+	errorIfNecessary(t, err)
+
+	bytes := root.getByteMap()
+	if len(bytes) != 3 {
+		t.Error("Wrong number of bytes in byteCount map!")
+	}
+
+	if bytes[122] != "0" {
+		t.Error("Wrong byte pattern for byte 122. Got:", bytes[122])
+	}
+
+	if bytes[121] != "11" {
+		t.Error("Wrong byte pattern for byte 121. Got:", bytes[121])
+	}
+
+	if bytes[120] != "10" {
+		t.Error("Wrong byte pattern for byte 120. Got:", bytes[120])
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // writeToFile tests

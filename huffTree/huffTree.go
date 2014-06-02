@@ -172,6 +172,7 @@ func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error
 // means that the encoded representation of b will be s, but as bytes, not as
 // a string.
 func (t *huffNode) getByteMap() (characters map[byte]string) {
+	characters = make(map[byte]string)
 	getByteMapRecursiveHelper(t, "", characters)
 	return characters
 }
@@ -204,7 +205,7 @@ func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte
 ////////////////////////////////////////////////////////////////////////////////
 
 // DecodeText turns the bytes in fromFile into bytes in toFile, decompressed under
-// the tree at the beginning of the file. On success, returns a nil error. Else, 
+// the tree at the beginning of the file. On success, returns a nil error. Else,
 // returns a non-nil error. If fromFile exists before the call, it is deleted
 // and replaced with the decompressed file.
 func DecodeText(fromFile, toFile string) (err error) {
