@@ -258,8 +258,7 @@ func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error
 		return err
 	}
 
-	// Decode our bits, writing them out to disk every 1,000 bytes so as not
-	// to use up all of main memory
+	// Decode our bits
 	toWrite := make([]byte, 0)
 	current := t
 
