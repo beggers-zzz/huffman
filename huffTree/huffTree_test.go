@@ -121,9 +121,7 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
-	if err != nil {
-		t.Error("Got non-nil error from makeTreeFromText: ", err)
-	}
+	errorIfNecessary(t, err)
 
 	root := tree.root
 	if root.count != 1 || root.char != 0 {
@@ -139,9 +137,7 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
-	if err != nil {
-		t.Error("Got non-nil error from makeTreeFromText: ", err)
-	}
+	errorIfNecessary(t, err)
 
 	root := tree.root
 	if root.count != 2 || root.char != 0 {
@@ -157,9 +153,7 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
-	if err != nil {
-		t.Error("Got non-nil error from makeTreeFromText: ", err)
-	}
+	errorIfNecessary(t, err)
 
 	root := tree.root
 	if root.count != 3 {
@@ -182,9 +176,7 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
-	if err != nil {
-		t.Error("Got non-nil error from makeTreeFromText: ", err)
-	}
+	errorIfNecessary(t, err)
 
 	root := tree.root
 	if root.count != 7 {
