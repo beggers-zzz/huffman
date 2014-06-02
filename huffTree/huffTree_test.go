@@ -35,9 +35,7 @@ func TestMakeTreeFromNodesOneNode(t *testing.T) {
 	node := &huffNode{char: 120, count: 10}
 	nodes := []*huffNode{node}
 	tree, err := makeTreeFromNodeSlice(nodes)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 
 	root := tree.root
 	if root.char != 120 || root.count != 10 {
@@ -49,9 +47,7 @@ func TestMakeTreeFromNodesOneNode(t *testing.T) {
 func TestMakeTreeFromNodesBasicTree(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 2}, {char: 120, count: 2}}
 	tree, err := makeTreeFromNodeSlice(nodes)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 
 	root := tree.root
 	if root.count != 4 {
@@ -74,9 +70,7 @@ func TestMakeTreeFromNodesMultiLevelTree(t *testing.T) {
 		{char: 120, count: 2},
 		{char: 121, count: 3}}
 	tree, err := makeTreeFromNodeSlice(nodes)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 
 	root := tree.root
 	if root.count != 7 {
@@ -107,9 +101,7 @@ func TestMakeTreeFromNodesMultiLevelTree(t *testing.T) {
 func TestMakeTreeFromTextEmpty(t *testing.T) {
 	b := make([]byte, 0)
 	err := ioutil.WriteFile(filename, b, 0644)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
@@ -125,9 +117,7 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 func TestMakeTreeFromTextSingleChar(t *testing.T) {
 	b := []byte{0}
 	err := ioutil.WriteFile(filename, b, 0644)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
@@ -145,9 +135,7 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 	b := []byte{0, 0}
 	err := ioutil.WriteFile(filename, b, 0644)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
@@ -165,9 +153,7 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 func TestMakeTreeFromTextBasicTree(t *testing.T) {
 	b := []byte{0, 0, 2}
 	err := ioutil.WriteFile(filename, b, 0644)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
@@ -192,9 +178,7 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 	b := []byte{0, 0, 1, 1, 2, 2, 2}
 	err := ioutil.WriteFile(filename, b, 0644)
-	if err != nil {
-		t.Error(err)
-	}
+	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
 	tree, err := makeTreeFromText(filename)
@@ -248,3 +232,21 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 ////////////////////////////////////////////////////////////////////////////////
 // Full-on tests. Encode, then decode several files of varying complexity
 ////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// helper functions
+////////////////////////////////////////////////////////////////////////////////
+
+// // Helper function to get a simple huffTree for use in tests. The tree
+// func getSimpleTree() (t *huffTree, err error) {
+// 	nodes = make([]huffNode)
+
+// 	return makeTreeFromNodeSlice(nodes)
+// }
+
+// If err is non-nil, will call t.Error(err). Just for code clean-ness
+func errorIfNecessary(t *testing.T, err error) {
+	if err != nil {
+		t.Error(err)
+	}
+}
