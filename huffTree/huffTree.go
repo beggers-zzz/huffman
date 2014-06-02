@@ -164,6 +164,14 @@ func (t *HuffTree) writeEncodedText(fromFile string, toFile *os.File) (err error
 	return errors.New("Not yet implemented")
 }
 
+// getByteMap returns a map from all the bytes in the tree onto strings, which will
+// be entirely 0s and 1s (in string form). If a byte b maps to a string s, that
+// means that the encoded representation of b will be s, but as bytes, not as
+// a string.
+func (t *HuffTree) getByteMap() (characters map[byte]string, err error) {
+	
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //               Stuff to decode a file
 ////////////////////////////////////////////////////////////////////////////////
