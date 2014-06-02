@@ -20,13 +20,13 @@ var filename = ".test"
 
 func TestMakeTreeFromNodesEmpty(t *testing.T) {
 	nodes := []*huffNode{}
-	tree, err := makeTreeFromNodeSlice(nodes)
+	root, err := makeTreeFromNodeSlice(nodes)
 
 	if err == nil {
 		t.Error("Got nil error when we shouldn't have.")
 	}
 
-	if tree != nil {
+	if root != nil {
 		t.Error("Got non-nil root.")
 	}
 }
@@ -34,10 +34,9 @@ func TestMakeTreeFromNodesEmpty(t *testing.T) {
 func TestMakeTreeFromNodesOneNode(t *testing.T) {
 	node := &huffNode{char: 120, count: 10}
 	nodes := []*huffNode{node}
-	tree, err := makeTreeFromNodeSlice(nodes)
+	root, err := makeTreeFromNodeSlice(nodes)
 	errorIfNecessary(t, err)
 
-	root := tree.root
 	if root.char != 120 || root.count != 10 {
 		t.Error("Unexpected! Got node with count:", root.count, "and char:",
 			root.char, "instead of count:", node.count, "and char:", node.char)
@@ -46,10 +45,9 @@ func TestMakeTreeFromNodesOneNode(t *testing.T) {
 
 func TestMakeTreeFromNodesBasicTree(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 2}, {char: 120, count: 2}}
-	tree, err := makeTreeFromNodeSlice(nodes)
+	root, err := makeTreeFromNodeSlice(nodes)
 	errorIfNecessary(t, err)
 
-	root := tree.root
 	if root.count != 4 {
 		t.Error("Tree's root count should have been 4, was: ", root.count, ".")
 	}
@@ -69,10 +67,9 @@ func TestMakeTreeFromNodesMultiLevelTree(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 2},
 		{char: 120, count: 2},
 		{char: 121, count: 3}}
-	tree, err := makeTreeFromNodeSlice(nodes)
+	root, err := makeTreeFromNodeSlice(nodes)
 	errorIfNecessary(t, err)
 
-	root := tree.root
 	if root.count != 7 {
 		t.Error("Tree's root count should have been 7, was:", root.count)
 	}
@@ -104,12 +101,12 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
-	tree, err := makeTreeFromText(filename)
+	root, err := makeTreeFromText(filename)
 	if err == nil {
 		t.Error("Got nil error from makeTreeFromText! Should be 'Text file empty'")
 	}
 
-	if tree != nil {
+	if root != nil {
 		t.Error("Got non-nil tree.")
 	}
 }
@@ -120,10 +117,9 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
-	tree, err := makeTreeFromText(filename)
+	root, err := makeTreeFromText(filename)
 	errorIfNecessary(t, err)
 
-	root := tree.root
 	if root.count != 1 || root.char != 0 {
 		t.Error("Tree was built improperly! Expected: { char: 0, count: 1 },",
 			"got { char:", root.char, ", count:", root.count, "}")
@@ -136,10 +132,9 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
-	tree, err := makeTreeFromText(filename)
+	root, err := makeTreeFromText(filename)
 	errorIfNecessary(t, err)
 
-	root := tree.root
 	if root.count != 2 || root.char != 0 {
 		t.Error("Tree was built improperly! Expected: { char: 0, count: 2 },",
 			"got { char:", root.char, ", count:", root.count, "}")
@@ -152,10 +147,9 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
-	tree, err := makeTreeFromText(filename)
+	root, err := makeTreeFromText(filename)
 	errorIfNecessary(t, err)
 
-	root := tree.root
 	if root.count != 3 {
 		t.Error("Tree's count was wrong! Should be 3, was", root.count)
 	}
@@ -175,10 +169,9 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 	errorIfNecessary(t, err)
 	defer os.Remove(filename)
 
-	tree, err := makeTreeFromText(filename)
+	root, err := makeTreeFromText(filename)
 	errorIfNecessary(t, err)
 
-	root := tree.root
 	if root.count != 7 {
 		t.Error("Tree's count was wrong! Should be 7, was", root.count)
 	}
@@ -205,6 +198,8 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 // getByteMap tests
 ////////////////////////////////////////////////////////////////////////////////
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // writeToFile tests
 ////////////////////////////////////////////////////////////////////////////////
@@ -228,13 +223,6 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 ////////////////////////////////////////////////////////////////////////////////
 // helper functions
 ////////////////////////////////////////////////////////////////////////////////
-
-// // Helper function to get a simple huffTree for use in tests. The tree
-// func getSimpleTree() (t *huffTree, err error) {
-// 	nodes = make([]huffNode)
-
-// 	return makeTreeFromNodeSlice(nodes)
-// }
 
 // If err is non-nil, will call t.Error(err). Just for code clean-ness
 func errorIfNecessary(t *testing.T, err error) {
