@@ -4,12 +4,12 @@
 package huffTree
 
 import (
+	"bytes"
 	"container/heap"
 	"errors"
 	"github.com/BenedictEggers/bitIO"
 	"io/ioutil"
 	"os"
-	"bytes"
 )
 
 // The actual Huffman Tree and all associated functions. Will build up a
@@ -169,11 +169,41 @@ func (t *HuffTree) writeEncodedText(fromFile string, toFile *os.File) (err error
 // means that the encoded representation of b will be s, but as bytes, not as
 // a string.
 func (t *HuffTree) getByteMap() (characters map[byte]string, err error) {
+	err = getByteMapRecursiveHelper(t.(*huffNode), "", characters)
+}
+
+// Helper function for getByteMap(). See above/below
+func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte]string) (err error) {
 	// We're going to do a pre-order traversal of the tree, building up (and
 	// sometimes, tearing down) a string--it will be 0 if we went left, 1 if
 	// we went right. When we reach a leaf node, we'll add it's character to the
 	// map, mapping to the current string
-	
+
+	// are we at a leaf node?
+	if cur.right == nil && cur.left == nil {
+		// yep
+		soFarMap[cur.char] = soFarStr
+		return nil
+	}
+
+	// Nope, need to keep recursing. First set up our map
+	if cur.left != nil {
+		err := getByteMapRecursiveHelper(huffNode.left, soFar+"0", soFarMap)
+		if err != nil {
+			// oh no!
+			return err
+		}
+	}
+
+	if cur.right != nil {
+		err := getByteMapRecursiveHelper(huffNode.right, soFar+"1", soFarMap)
+		if err != nil {
+			// oh no!
+			return err
+		}
+	}
+
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
