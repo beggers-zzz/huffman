@@ -174,8 +174,18 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 	//		- The length of its binary (as a uint16)
 	//		- The binary (in string format, because that memory doesn't matter
 	//			nearly as much as programming ease)
-	for char, _ := range bytes {
+	for char, repString := range bytes {
 		_, err = f.Write([]byte{char})
+		if err != nil {
+			return err
+		}
+
+		_, err = f.Write([]byte(repString))
+		if err != nil {
+			return err
+		}
+
+		
 	}
 
 	return nil
