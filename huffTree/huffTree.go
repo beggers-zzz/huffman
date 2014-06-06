@@ -5,6 +5,7 @@ package huffTree
 
 import (
 	"bytes"
+	"encoding/binary"
 	"container/heap"
 	"errors"
 	"github.com/BenedictEggers/bitIO"
@@ -156,8 +157,28 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t *huffNode, err error) {
 // writeToFile writes the tree out to the passed os.File.
 // Will be called by EncodeText to write the tree out to the beginning
 // of the encoded file.
-func (t *huffNode) writeToFile(file *os.File) (err error) {
-	return errors.New("Undefined method")
+func (t *huffNode) writeToFile(f *os.File) (err error) {
+	// First, get the map of byte->string of 0s and 1s (character->binary representation)
+	bytes := t.getByteMap()
+
+	// Then, write the number of bytes we have in the tree
+	sizeBytes := make([]byte, 2)
+	binary.PutUvarint(sizeBytes, uint64(len(bytes)))
+	_, err = f.Write(sizeBytes)
+	if err != nil {
+		return err
+	}
+
+	// Now for each byte, we write:
+	//		- The byte
+	//		- The length of its binary (as a uint16)
+	//		- The binary (in string format, because that memory doesn't matter
+	//			nearly as much as programming ease)
+	for char, _ := range bytes {
+		_, err = f.Write([]byte{char})
+	}
+
+	return nil
 }
 
 // writeEncodedTextToFile encodes the text in the passed file under the tree
