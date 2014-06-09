@@ -11,6 +11,7 @@ import (
 	"math/rand"
 	"os"
 	"testing"
+	"fmt"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -303,52 +304,8 @@ func TestGetByteMapManyBytes(t *testing.T) {
 // writeToFile and makeTreeFromTreeFile tests
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestReadAndWriteToFileOneNodeTree(t *testing.T) {
-	filename := string(rand.Int63())
-	nodes := []*huffNode{{char: 120, count: 1}}
-
-	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
-
-	file, err := os.Create(filename)
-	defer os.Remove(filename)
-	errorIfNecessary(t, err)
-
-	err = root.writeToFile(file)
-	errorIfNecessary(t, err)
-	err = file.Close()
-	errorIfNecessary(t, err)
-
-	bytes, err := ioutil.ReadFile(filename)
-	errorIfNecessary(t, err)
-	if len(bytes) != 4 {
-		t.Error("Wrong file size. Wanted 4 bytes, got", len(bytes))
-	}
-	if bytes[0]+1 != 1 {
-		t.Error("Wrong number of bytes. Wanted 1, got", bytes[0]+1)
-	}
-	if bytes[1] != 120 {
-		t.Error("Wrong byte written. Wanted 120, got", bytes[1])
-	}
-	if bytes[2] != 0 {
-		t.Error("Wrong bitrep length. Wanted 0, got", bytes[2])
-	}
-	if bytes[3] != 0 {
-		t.Error("Wrong bitrep. Should have been 0 (all padding), got", bytes[3])
-	}
-
-	file, err = os.Open(filename)
-	errorIfNecessary(t, err)
-	newRoot, err := makeTreeFromTreeFile(file)
-	errorIfNecessary(t, err)
-
-	if !equal(root, newRoot) {
-		t.Error("Something went wrong creating the new tree.")
-	}
-}
-
 func TestReadAndWriteToFileBasic(t *testing.T) {
-	filename := string(rand.Int63())
+	filename := ".test"
 	nodes := []*huffNode{{char: 120, count: 1},
 		{char: 121, count: 2}}
 
@@ -380,6 +337,10 @@ func TestReadAndWriteToFileBasic(t *testing.T) {
 
 	if !equal(root, newRoot) {
 		t.Error("Something went wrong creating the new tree!")
+		preOrderTraverse(root)
+		fmt.Println() // newline
+		preOrderTraverse(newRoot)
+		fmt.Println() // newline
 	}
 }
 
@@ -463,7 +424,17 @@ func equal(t1 *huffNode, t2 *huffNode) bool {
 	} else {
 		return equal(t1.left, t2.left) &&
 			equal(t1.right, t2.right) &&
-			t1.char == t2.char &&
-			t1.count == t2.count
+			t1.char == t2.char
 	}
+}
+
+// Traverse the tree so we can see what went wrong when creating them
+func preOrderTraverse(t *huffNode) {
+	if t == nil {
+		return
+	}
+	preOrderTraverse(t.left)
+	fmt.Print(t.char)
+	fmt.Print(" ")
+	preOrderTraverse(t.right)
 }
