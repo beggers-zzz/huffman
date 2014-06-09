@@ -30,6 +30,9 @@ type huffNode struct {
 // Will be written at the beginning of every encoded file for integrity check
 var magicBytes = [...]byte{'m', 'o', 'o', 'o', 's', 'e'}
 
+// Endian-ness to encode/decode with
+var endianness = binary.LittleEndian
+
 ////////////////////////////////////////////////////////////////////////////////
 //               Stuff to encode a file
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,12 +162,10 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t *huffNode, err error) {
 // of the encoded file.
 func (t *huffNode) writeToFile(f *os.File) (err error) {
 	// First, get the map of byte->string of 0s and 1s (character->binary representation)
-	bytes := t.getByteMap()
+	var bytes map[byte]string = t.getByteMap()
 
 	// Then, write the number of bytes we have in the tree
-	sizeBytes := make([]byte, 2)
-	binary.PutUvarint(sizeBytes, uint64(len(bytes)))
-	_, err = f.Write(sizeBytes)
+	err = binary.Write(f, endianness, int16(len(bytes)))
 	if err != nil {
 		return err
 	}
@@ -172,20 +173,36 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 	// Now for each byte, we write:
 	//		- The byte
 	//		- The length of its binary (as a uint16)
-	//		- The binary (in string format, because that memory doesn't matter
-	//			nearly as much as programming ease)
+	//		- The binary
 	for char, repString := range bytes {
+		// First the character
 		_, err = f.Write([]byte{char})
 		if err != nil {
 			return err
 		}
 
-		_, err = f.Write([]byte(repString))
+		// Now the length of the binary
+		err = binary.Write(f, endianness, int16(len(repString)))
 		if err != nil {
 			return err
 		}
 
+		// And the actual bits
+		bw, err := bitIO.NewWriterOnFile(f)
+		if err != nil {
+			return err
+		}
 		
+		for _, c := range repString {
+			err = bw.WriteBit(byte(c - '0'))  // WriteBit() wants an int, we have runes
+			if err != nil {
+				return err
+			}
+		}
+		_, err = bw.CloseAndReturnFile()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
