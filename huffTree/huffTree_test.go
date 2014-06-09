@@ -278,29 +278,29 @@ func TestGetByteMapManyBytes(t *testing.T) {
 		t.Error("Wrong number of bytes in byteCount map:", len(bytes))
 	}
 
-	if bytes[124] != "1" {
-		t.Error("Wrong bit pattern for byte 120. Got:", bytes[124])
-	}
-
-	if bytes[123] != "01" {
-		t.Error("Wrong bit pattern for byte 121. Got:", bytes[123])
-	}
-
-	if bytes[122] != "001" {
-		t.Error("Wrong bit pattern for byte 120. Got:", bytes[122])
+	if bytes[120] != "0000" {
+		t.Error("Wrong bit pattern for byte 122. Got:", bytes[120])
 	}
 
 	if bytes[121] != "0001" {
 		t.Error("Wrong bit pattern for byte 121. Got:", bytes[121])
 	}
 
-	if bytes[120] != "0000" {
-		t.Error("Wrong bit pattern for byte 122. Got:", bytes[120])
+	if bytes[122] != "001" {
+		t.Error("Wrong bit pattern for byte 120. Got:", bytes[122])
+	}
+
+	if bytes[123] != "01" {
+		t.Error("Wrong bit pattern for byte 121. Got:", bytes[123])
+	}
+
+	if bytes[124] != "1" {
+		t.Error("Wrong bit pattern for byte 120. Got:", bytes[124])
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// writeToFile tests
+// writeToFile and makeTreeFromTreeFile tests
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestWriteToFileOneNodeTree(t *testing.T) {
@@ -363,32 +363,48 @@ func TestWriteToFileBasic(t *testing.T) {
 	if bytes[0]+1 != 2 {
 		t.Error("Wrong number of bytes! Wanted 2, got", bytes[0]+1)
 	}
-	if bytes[1] != 120 {
-		t.Error("Wrong byte for first byte! Wanted 120, got", bytes[1])
+
+}
+
+func TestWriteToFileMoreAdvanced(t *testing.T) {
+	filename := string(rand.Int63())
+
+	nodes := []*huffNode{{char: 120, count: 1},
+		{char: 121, count: 2},
+		{char: 122, count: 4},
+		{char: 123, count: 8},
+		{char: 124, count: 16},
+		{char: 125, count: 32},
+		{char: 126, count: 64},
+		{char: 127, count: 128},
+		{char: 128, count: 256}}
+
+	root, err := makeTreeFromNodeSlice(nodes)
+	errorIfNecessary(t, err)
+
+	file, err := os.Create(filename)
+	defer os.Remove(filename)
+	errorIfNecessary(t, err)
+
+	err = root.writeToFile(file)
+	errorIfNecessary(t, err)
+	err = file.Close()
+	errorIfNecessary(t, err)
+
+	bytes, err := ioutil.ReadFile(filename)
+	errorIfNecessary(t, err)
+
+	if len(bytes) != len(nodes)*3 + 1 {
+		t.Error("Wrong file size. Wanted", len(nodes)*3 + 1, ", got", len(bytes))
 	}
-	if bytes[2] != 1 {
-		t.Error("Wrong bitrep length written for first char. Wanted 1, got", bytes[2])
+	if bytes[0]+1 != 9 {
+		t.Error("Wrong size written. Wanted 9, got", bytes[0]+1)
 	}
-	if bytes[3] != 0 {
-		t.Error("Wrong bitrep written for first char. Wanted 0, got", bytes[3])
-	}
-	if bytes[4] != 121 {
-		t.Error("Wrong byte for first byte! Wanted 121, got", bytes[4])
-	}
-	if bytes[5] != 1 {
-		t.Error("Wrong bitrep length written for second char. Wanted 1, got", bytes[5])
-	}
-	if bytes[6] != 128 {
-		t.Error("Wrong bitrep written for first char. Wanted 128, got", bytes[6])
-	}
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // writeEncodedText tests
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// makeTreeFromTreeFile tests
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -407,5 +423,22 @@ func TestWriteToFileBasic(t *testing.T) {
 func errorIfNecessary(t *testing.T, err error) {
 	if err != nil {
 		t.Error(err)
+	}
+}
+
+// Checks if the passed two trees are equal--that is, if they were set on the same
+// encoded text, they would produce the exact some decoded text.
+func equal(t1 *huffNode, t2 *huffNode) bool {
+	if t1 == nil && t2 == nil {
+		return true
+	} else if t1 == nil && t2 != nil {
+		return false
+	} else if t2 == nil && t1 != nil {
+		return false
+	} else {
+		return equal(t1.left, t2.left) &&
+			equal(t1.right, t2.right) &&
+			t1.char == t2.char &&
+			t1.count == t2.count
 	}
 }
