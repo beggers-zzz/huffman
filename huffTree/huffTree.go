@@ -212,7 +212,29 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 // it was called on, and writes out the encoded bits to the passed file. Is called
 // by EncodeText. Returns a non-nil error on failure, nil otherwise.
 func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error) {
-	return errors.New("Not yet implemented")
+	toEncode, err := ioutil.ReadFile(fromFile)
+	if err != nil {
+		return err
+	}
+
+	bitReps := t.getByteMap()
+	bw, err := bitIO.NewWriterOnFile(toFile)
+	if err != nil {
+		return err
+	}
+
+	// Write 'em
+	for _, char := range toEncode {
+		bitRep := bitReps[char]
+		for _, bit := range bitRep {
+			err = bw.WriteBit(byte(bit - '0'))
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 // getByteMap returns a map from all the bytes in the tree onto strings, which will
