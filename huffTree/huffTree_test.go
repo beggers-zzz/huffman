@@ -7,7 +7,6 @@ package huffTree
 // tested depend on each other, so failures are apparent at the lowest level.
 
 import (
-	"fmt"
 	"io/ioutil"
 	"math"
 	"math/rand"
