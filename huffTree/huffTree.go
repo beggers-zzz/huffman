@@ -146,7 +146,7 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t *huffNode, err error) {
 	for nh.Len() > 1 {
 		nodeOne := heap.Pop(nh).(*huffNode)
 		nodeTwo := heap.Pop(nh).(*huffNode)
-		newNode := &huffNode{char: 255, // random char
+		newNode := &huffNode{char: 0, // random char
 			count: nodeOne.count + nodeTwo.count,
 			left:  nodeOne,
 			right: nodeTwo}
@@ -199,7 +199,7 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 				return err
 			}
 		}
-		_, err = bw.CloseAndReturnFile()
+		f, err = bw.CloseAndReturnFile()
 		if err != nil {
 			return err
 		}
@@ -321,12 +321,29 @@ func makeTreeFromTreeFile(file *os.File) (t *huffNode, err error) {
 			return nil, err
 		}
 
+		current := &root
 		for j := 0; j < numBits; j++ {
-			
+			bit, err := br.ReadBit()
+			if err != nil {
+				return nil, err
+			}
+
+			if bit == 0 {
+				if current.left == nil {
+					current.left = &huffNode{}
+				}
+				current = current.left
+			} else {
+				if current.right == nil {
+					current.right = &huffNode{}
+				}
+				current = current.right
+			}
 		}
+		current.char = char
 	}
 
-	return &root, errors.New("Undefined method")
+	return &root, nil
 }
 
 // writeDecodedText decompresses the bits in the passed file, and puts the decompressed
