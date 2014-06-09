@@ -10,9 +10,9 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"math/rand"
 )
 
-var filename = ".test"
 
 ////////////////////////////////////////////////////////////////////////////////
 // makeTreeFromNodeSlice tests
@@ -96,6 +96,7 @@ func TestMakeTreeFromNodesMultiLevelTree(t *testing.T) {
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestMakeTreeFromTextEmpty(t *testing.T) {
+	filename := string(rand.Int63())
 	b := make([]byte, 0)
 	err := ioutil.WriteFile(filename, b, 0644)
 	errorIfNecessary(t, err)
@@ -112,6 +113,7 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 }
 
 func TestMakeTreeFromTextSingleChar(t *testing.T) {
+	filename := string(rand.Int63())
 	b := []byte{0}
 	err := ioutil.WriteFile(filename, b, 0644)
 	errorIfNecessary(t, err)
@@ -127,6 +129,7 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 }
 
 func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
+	filename := string(rand.Int63())
 	b := []byte{0, 0}
 	err := ioutil.WriteFile(filename, b, 0644)
 	errorIfNecessary(t, err)
@@ -142,6 +145,7 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 }
 
 func TestMakeTreeFromTextBasicTree(t *testing.T) {
+	filename := string(rand.Int63())
 	b := []byte{0, 0, 2}
 	err := ioutil.WriteFile(filename, b, 0644)
 	errorIfNecessary(t, err)
@@ -164,6 +168,7 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 }
 
 func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
+	filename := string(rand.Int63())
 	b := []byte{0, 0, 1, 1, 2, 2, 2}
 	err := ioutil.WriteFile(filename, b, 0644)
 	errorIfNecessary(t, err)
@@ -299,7 +304,27 @@ func TestGetByteMapManyBytes(t *testing.T) {
 // writeToFile tests
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestWriteToFileCorrectSize(t *testing.T) {
+func TestWriteToFileOneNodeTree(t *testing.T) {
+	filename := string(rand.Int63())
+	nodes := []*huffNode{{char: 120, count: 1}}
+
+	root, err := makeTreeFromNodeSlice(nodes)
+	errorIfNecessary(t, err)
+
+	file, err := os.Create(filename)
+	defer os.Remove(filename)
+	errorIfNecessary(t, err)
+
+	err = root.writeToFile(file)
+	errorIfNecessary(t, err)
+	err = file.Close()
+	errorIfNecessary(t, err)
+
+
+}
+
+func TestWriteToFileBasic(t *testing.T) {
+	filename := string(rand.Int63())
 	nodes := []*huffNode{{char: 120, count: 1},
 		{char: 121, count: 2}}
 
