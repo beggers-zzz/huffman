@@ -5,8 +5,8 @@ package huffTree
 
 import (
 	"bytes"
-	"encoding/binary"
 	"container/heap"
+	"encoding/binary"
 	"errors"
 	"github.com/BenedictEggers/bitIO"
 	"io/ioutil"
@@ -192,9 +192,9 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 		if err != nil {
 			return err
 		}
-		
+
 		for _, c := range repString {
-			err = bw.WriteBit(byte(c - '0'))  // WriteBit() wants an int, we have runes
+			err = bw.WriteBit(byte(c - '0')) // WriteBit() wants an int, we have runes
 			if err != nil {
 				return err
 			}
