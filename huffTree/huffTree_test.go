@@ -305,6 +305,32 @@ func TestGetByteMapManyBytes(t *testing.T) {
 // writeToFile and makeTreeFromTreeFile tests
 ////////////////////////////////////////////////////////////////////////////////
 
+func TestReadAndWriteToFileOneNodeTree(t *testing.T) {
+	filename := string(rand.Int63())
+	nodes := []*huffNode{{char: 120, count: 1}}
+
+	root, err := makeTreeFromNodeSlice(nodes)
+	errorIfNecessary(t, err)
+
+	file, err := os.Create(filename)
+	defer os.Remove(filename)
+	errorIfNecessary(t, err)
+
+	err = root.writeToFile(file)
+	errorIfNecessary(t, err)
+	err = file.Close()
+	errorIfNecessary(t, err)
+
+	file, err = os.Open(filename)
+	errorIfNecessary(t, err)
+	newRoot, err := makeTreeFromTreeFile(file)
+	errorIfNecessary(t, err)
+
+	if !equal(root, newRoot) {
+		t.Error("Something went wrong creating the new tree.")
+	}
+}
+
 func TestReadAndWriteToFileBasic(t *testing.T) {
 	filename := ".test"
 	nodes := []*huffNode{{char: 120, count: 1},
@@ -329,10 +355,6 @@ func TestReadAndWriteToFileBasic(t *testing.T) {
 
 	if !equal(root, newRoot) {
 		t.Error("Something went wrong creating the new tree!")
-		preOrderTraverse(root)
-		fmt.Println() // newline
-		preOrderTraverse(newRoot)
-		fmt.Println() // newline
 	}
 }
 
@@ -435,15 +457,4 @@ func equal(t1 *huffNode, t2 *huffNode) bool {
 			equal(t1.right, t2.right) &&
 			t1.char == t2.char
 	}
-}
-
-// Traverse the tree so we can see what went wrong when creating them
-func preOrderTraverse(t *huffNode) {
-	if t == nil {
-		return
-	}
-	preOrderTraverse(t.left)
-	fmt.Print(t.char)
-	fmt.Print(" ")
-	preOrderTraverse(t.right)
 }
