@@ -165,7 +165,7 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 	var bytes map[byte]string = t.getByteMap()
 
 	// Then, write the number of bytes we have in the tree
-	err = binary.Write(f, endianness, int16(len(bytes)))
+	err = binary.Write(f, endianness, int8(len(bytes)-1))
 	if err != nil {
 		return err
 	}
@@ -182,7 +182,7 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 		}
 
 		// Now the length of the binary
-		err = binary.Write(f, endianness, int16(len(repString)))
+		err = binary.Write(f, endianness, int8(len(repString)))
 		if err != nil {
 			return err
 		}
