@@ -339,15 +339,11 @@ func TestReadAndWriteToFileBasic(t *testing.T) {
 func TestReadAndWriteToFileMoreAdvanced(t *testing.T) {
 	filename := string(rand.Int63())
 
-	nodes := []*huffNode{{char: 120, count: 1},
-		{char: 121, count: 2},
-		{char: 122, count: 4},
-		{char: 123, count: 8},
-		{char: 124, count: 16},
-		{char: 125, count: 32},
-		{char: 126, count: 64},
-		{char: 127, count: 128},
-		{char: 128, count: 256}}
+	nodes := []*huffNode{}
+	for i := 0; i < 8; i++ {
+		nodes = append(nodes, &huffNode{char: byte(i + 120),
+			count: uint32(math.Pow(2.0, float64(i)))})
+	}
 
 	root, err := makeTreeFromNodeSlice(nodes)
 	errorIfNecessary(t, err)
@@ -375,7 +371,7 @@ func TestReadAndWriteToFileExpertMode(t *testing.T) {
 	filename := string(rand.Int63())
 
 	nodes := []*huffNode{}
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 30; i++ {
 		nodes = append(nodes, &huffNode{char: byte(i + 120),
 			count: uint32(math.Pow(2.0, float64(i)))})
 	}
