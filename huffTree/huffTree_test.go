@@ -307,7 +307,7 @@ func TestWriteToFileCorrectSize(t *testing.T) {
 	errorIfNecessary(t, err)
 
 	file, err := os.Create(filename)
-	//defer os.Remove(filename)
+	defer os.Remove(filename)
 	errorIfNecessary(t, err)
 
 	err = root.writeToFile(file)
