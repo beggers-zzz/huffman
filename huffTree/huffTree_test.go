@@ -1,7 +1,7 @@
 // Ben Eggers
 // GNU GPL'd
 
-package huffTree
+package huffMan
 
 // Tests the huffTree. Tests are (ostensibly) ordered in the order the function
 // tested depend on each other, so failures are apparent at the lowest level.

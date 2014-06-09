@@ -1,7 +1,7 @@
 // Ben Eggers
 // GNU GPL'd
 
-package huffTree
+package huffMan
 
 import (
 	"bytes"
