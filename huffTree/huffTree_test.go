@@ -7,11 +7,12 @@ package huffTree
 // tested depend on each other, so failures are apparent at the lowest level.
 
 import (
+	"fmt"
 	"io/ioutil"
+	"math"
 	"math/rand"
 	"os"
 	"testing"
-	"fmt"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -321,15 +322,6 @@ func TestReadAndWriteToFileBasic(t *testing.T) {
 	err = file.Close()
 	errorIfNecessary(t, err)
 
-	bytes, err := ioutil.ReadFile(filename)
-	errorIfNecessary(t, err)
-	if len(bytes) != 7 {
-		t.Error("Wrong file size. Wanted 7 bytes, got", len(bytes))
-	}
-	if bytes[0]+1 != 2 {
-		t.Error("Wrong number of bytes! Wanted 2, got", bytes[0]+1)
-	}
-
 	file, err = os.Open(filename)
 	errorIfNecessary(t, err)
 	newRoot, err := makeTreeFromTreeFile(file)
@@ -369,15 +361,36 @@ func TestReadAndWriteToFileMoreAdvanced(t *testing.T) {
 	err = file.Close()
 	errorIfNecessary(t, err)
 
-	bytes, err := ioutil.ReadFile(filename)
+	file, err = os.Open(filename)
+	errorIfNecessary(t, err)
+	newRoot, err := makeTreeFromTreeFile(file)
 	errorIfNecessary(t, err)
 
-	if len(bytes) != len(nodes)*3+1 {
-		t.Error("Wrong file size. Wanted", len(nodes)*3+1, ", got", len(bytes))
+	if !equal(root, newRoot) {
+		t.Error("Something went wrong creating the new tree!")
 	}
-	if bytes[0]+1 != 9 {
-		t.Error("Wrong size written. Wanted 9, got", bytes[0]+1)
+}
+
+func TestReadAndWriteToFileExpertMode(t *testing.T) {
+	filename := string(rand.Int63())
+
+	nodes := []*huffNode{}
+	for i := 0; i < 20; i++ {
+		nodes = append(nodes, &huffNode{char: byte(i + 120),
+			count: uint32(math.Pow(2.0, float64(i)))})
 	}
+
+	root, err := makeTreeFromNodeSlice(nodes)
+	errorIfNecessary(t, err)
+
+	file, err := os.Create(filename)
+	defer os.Remove(filename)
+	errorIfNecessary(t, err)
+
+	err = root.writeToFile(file)
+	errorIfNecessary(t, err)
+	err = file.Close()
+	errorIfNecessary(t, err)
 
 	file, err = os.Open(filename)
 	errorIfNecessary(t, err)
