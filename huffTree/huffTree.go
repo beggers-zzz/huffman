@@ -194,7 +194,7 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 		}
 
 		for _, c := range repString {
-			err = bw.WriteBit(byte(c - '0')) // WriteBit() wants an int, we have runes
+			err = bw.WriteBit(byte(c - '0')) // WriteBit() wants a byte, we have runes
 			if err != nil {
 				return err
 			}
@@ -293,7 +293,40 @@ func DecodeText(fromFile, toFile string) (err error) {
 // makeTreeFromTreeFile takes in a file in the same format TREE.writeToFile()
 // puts out, and remakes a HuffTree from it.
 func makeTreeFromTreeFile(file *os.File) (t *huffNode, err error) {
-	return nil, errors.New("Undefined method")
+	bytes := make([]byte, 1)
+	_, err = file.Read(bytes)
+	if err != nil {
+		return nil, err
+	}
+	length := int(bytes[0] + 1)
+
+	// Now we read in all the characters and their associated bit strings,
+	// and make a tree out of them
+	root := huffNode{}
+	for i := 0; i < length; i++ {
+		_, err = file.Read(bytes)
+		if err != nil {
+			return nil, err
+		}
+		char := bytes[0]
+
+		_, err = file.Read(bytes)
+		if err != nil {
+			return nil, err
+		}
+		numBits := int(bytes[0])
+
+		br, err := bitIO.NewReaderOnFile(file)
+		if err != nil {
+			return nil, err
+		}
+
+		for j := 0; j < numBits; j++ {
+			
+		}
+	}
+
+	return &root, errors.New("Undefined method")
 }
 
 // writeDecodedText decompresses the bits in the passed file, and puts the decompressed
