@@ -303,7 +303,7 @@ func TestGetByteMapManyBytes(t *testing.T) {
 // writeToFile and makeTreeFromTreeFile tests
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestWriteToFileOneNodeTree(t *testing.T) {
+func TestReadAndWriteToFileOneNodeTree(t *testing.T) {
 	filename := string(rand.Int63())
 	nodes := []*huffNode{{char: 120, count: 1}}
 
@@ -336,9 +336,18 @@ func TestWriteToFileOneNodeTree(t *testing.T) {
 	if bytes[3] != 0 {
 		t.Error("Wrong bitrep. Should have been 0 (all padding), got", bytes[3])
 	}
+
+	file, err = os.Open(filename)
+	errorIfNecessary(t, err)
+	newRoot, err := makeTreeFromTreeFile(file)
+	errorIfNecessary(t, err)
+
+	if !equal(root, newRoot) {
+		t.Error("Something went wrong creating the new tree.")
+	}
 }
 
-func TestWriteToFileBasic(t *testing.T) {
+func TestReadAndWriteToFileBasic(t *testing.T) {
 	filename := string(rand.Int63())
 	nodes := []*huffNode{{char: 120, count: 1},
 		{char: 121, count: 2}}
@@ -364,9 +373,17 @@ func TestWriteToFileBasic(t *testing.T) {
 		t.Error("Wrong number of bytes! Wanted 2, got", bytes[0]+1)
 	}
 
+	file, err = os.Open(filename)
+	errorIfNecessary(t, err)
+	newRoot, err := makeTreeFromTreeFile(file)
+	errorIfNecessary(t, err)
+
+	if !equal(root, newRoot) {
+		t.Error("Something went wrong creating the new tree!")
+	}
 }
 
-func TestWriteToFileMoreAdvanced(t *testing.T) {
+func TestReadAndWriteToFileMoreAdvanced(t *testing.T) {
 	filename := string(rand.Int63())
 
 	nodes := []*huffNode{{char: 120, count: 1},
@@ -394,13 +411,21 @@ func TestWriteToFileMoreAdvanced(t *testing.T) {
 	bytes, err := ioutil.ReadFile(filename)
 	errorIfNecessary(t, err)
 
-	if len(bytes) != len(nodes)*3 + 1 {
-		t.Error("Wrong file size. Wanted", len(nodes)*3 + 1, ", got", len(bytes))
+	if len(bytes) != len(nodes)*3+1 {
+		t.Error("Wrong file size. Wanted", len(nodes)*3+1, ", got", len(bytes))
 	}
 	if bytes[0]+1 != 9 {
 		t.Error("Wrong size written. Wanted 9, got", bytes[0]+1)
 	}
-	
+
+	file, err = os.Open(filename)
+	errorIfNecessary(t, err)
+	newRoot, err := makeTreeFromTreeFile(file)
+	errorIfNecessary(t, err)
+
+	if !equal(root, newRoot) {
+		t.Error("Something went wrong creating the new tree!")
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
