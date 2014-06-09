@@ -8,11 +8,10 @@ package huffTree
 
 import (
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"testing"
-	"math/rand"
 )
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // makeTreeFromNodeSlice tests
@@ -320,7 +319,23 @@ func TestWriteToFileOneNodeTree(t *testing.T) {
 	err = file.Close()
 	errorIfNecessary(t, err)
 
-
+	bytes, err := ioutil.ReadFile(filename)
+	errorIfNecessary(t, err)
+	if len(bytes) != 4 {
+		t.Error("Wrong file size. Wanted 4 bytes, got", len(bytes))
+	}
+	if bytes[0]+1 != 1 {
+		t.Error("Wrong number of bytes. Wanted 1, got", bytes[0]+1)
+	}
+	if bytes[1] != 120 {
+		t.Error("Wrong byte written. Wanted 120, got", bytes[1])
+	}
+	if bytes[2] != 0 {
+		t.Error("Wrong bitrep length. Wanted 0, got", bytes[2])
+	}
+	if bytes[3] != 0 {
+		t.Error("Wrong bitrep. Should have been 0 (all padding), got", bytes[3])
+	}
 }
 
 func TestWriteToFileBasic(t *testing.T) {
@@ -342,30 +357,27 @@ func TestWriteToFileBasic(t *testing.T) {
 
 	bytes, err := ioutil.ReadFile(filename)
 	errorIfNecessary(t, err)
+	if len(bytes) != 7 {
+		t.Error("Wrong file size. Wanted 7 bytes, got", len(bytes))
+	}
 	if bytes[0]+1 != 2 {
 		t.Error("Wrong number of bytes! Wanted 2, got", bytes[0]+1)
 	}
-
 	if bytes[1] != 120 {
 		t.Error("Wrong byte for first byte! Wanted 120, got", bytes[1])
 	}
-
 	if bytes[2] != 1 {
 		t.Error("Wrong bitrep length written for first char. Wanted 1, got", bytes[2])
 	}
-
 	if bytes[3] != 0 {
 		t.Error("Wrong bitrep written for first char. Wanted 0, got", bytes[3])
 	}
-
 	if bytes[4] != 121 {
 		t.Error("Wrong byte for first byte! Wanted 121, got", bytes[4])
 	}
-
 	if bytes[5] != 1 {
 		t.Error("Wrong bitrep length written for second char. Wanted 1, got", bytes[5])
 	}
-
 	if bytes[6] != 128 {
 		t.Error("Wrong bitrep written for first char. Wanted 128, got", bytes[6])
 	}
