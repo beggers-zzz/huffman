@@ -40,7 +40,7 @@ var endianness = binary.LittleEndian
 
 // EncodeText turns the bytes in fromFile into bytes in toFile, compressed under
 // a tree created on the file. On success, returns a nil error and returns a
-// non-nil error otherwise.
+// non-nil error otherwise. If something does go wrong, there will be no file.
 func EncodeText(fromFile, toFile string) (err error) {
 	// Make a tree from the file
 	tree, err := makeTreeFromText(fromFile)
@@ -51,24 +51,32 @@ func EncodeText(fromFile, toFile string) (err error) {
 	// Open up our file to write
 	openFile, err := os.Create(toFile)
 	if err != nil {
+		// Something went wrong, delete the file
+		os.Remove(toFile)
 		return err
 	}
 
 	// Set up the write cursor to be in the correct position
 	_, err = openFile.Seek(int64(len(magicBytes)), 0)
 	if err != nil {
+		// Something went wrong, delete the file
+		os.Remove(toFile)
 		return err
 	}
 
 	// Write the tree to the file
 	err = tree.writeToFile(openFile)
 	if err != nil {
+		// Something went wrong, delete the file
+		os.Remove(toFile)
 		return err
 	}
 
 	// Encode the actual stuff and write it out
 	err = tree.writeEncodedText(fromFile, openFile)
 	if err != nil {
+		// Something went wrong, delete the file
+		os.Remove(toFile)
 		return err
 	}
 
@@ -76,11 +84,15 @@ func EncodeText(fromFile, toFile string) (err error) {
 	// when Decode() is called if the tree is valid
 	_, err = openFile.Seek(0, 0)
 	if err != nil {
+		// Something went wrong, delete the file
+		os.Remove(toFile)
 		return err
 	}
 
 	_, err = openFile.Write(magicBytes[:])
 	if err != nil {
+		// Something went wrong, delete the file
+		os.Remove(toFile)
 		return err
 	}
 
@@ -276,10 +288,11 @@ func getByteMapRecursiveHelper(cur *huffNode, soFarStr string, soFarMap map[byte
 //               Stuff to decode a file
 ////////////////////////////////////////////////////////////////////////////////
 
-// DecodeText turns the bytes in fromFile into bytes in toFile, decompressed under
-// the tree at the beginning of the file. On success, returns a nil error. Else,
-// returns a non-nil error. If fromFile exists before the call, it is deleted
-// and replaced with the decompressed file.
+// DecodeText turns the bytes in fromFile into bytes in toFile.
+// On success, returns a nil error. Else, returns a non-nil error.
+// If fromFile exists before the call, it is deleted and replaced with
+// the decompressed file. If something goes wrong, there will be no toFile
+// when the function returns.
 func DecodeText(fromFile, toFile string) (err error) {
 	// Open up the encoded file
 	encoded, err := os.Open(fromFile)
@@ -290,23 +303,27 @@ func DecodeText(fromFile, toFile string) (err error) {
 	integrityCheck := make([]byte, len(magicBytes)) // to store the first few bytes
 	_, err = encoded.Read(integrityCheck)
 	if err != nil {
+		os.Remove(toFile)
 		return err
 	}
 
 	if !bytes.Equal(integrityCheck, magicBytes[:]) {
 		// File is corrupted
+		os.Remove(toFile)
 		return errors.New("Corrupted file")
 	}
 
 	// Make the tree
 	t, err := makeTreeFromTreeFile(encoded)
 	if err != nil {
+		os.Remove(toFile)
 		return err
 	}
 
 	// And decode the rest of the file
 	err = t.writeDecodedText(encoded, toFile)
 	if err != nil {
+		os.Remove(toFile)
 		return err
 	}
 
