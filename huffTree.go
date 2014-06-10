@@ -9,7 +9,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/BenedictEggers/bitIO"
-	"io"
 	"io/ioutil"
 	"os"
 )
@@ -419,18 +418,12 @@ func (t *huffNode) writeDecodedText(fromFile *os.File,
 	toWrite := []byte{}
 	current := t
 
-	// until we reach the end of the file...
-	bit, err := reader.ReadBit()
-	for err != io.EOF && uint64(len(toWrite)) < length {
-		// Check for other errors
+	// until we've written as many bytes as are encoded...
+	for uint64(len(toWrite)) < length {
+		bit, err := reader.ReadBit()
+		// Check for errors
 		if err != nil {
 			return err
-		}
-
-		if current.left == nil && current.right == nil {
-			// We're at a leaf node, write out its character
-			toWrite = append(toWrite, current.char)
-			current = t
 		}
 
 		if bit == 0 {
@@ -442,7 +435,11 @@ func (t *huffNode) writeDecodedText(fromFile *os.File,
 			return errors.New("Got invalid bit")
 		}
 
-		bit, err = reader.ReadBit()
+		if current.left == nil && current.right == nil {
+			// We're at a leaf node, write out its character
+			toWrite = append(toWrite, current.char)
+			current = t
+		}
 	}
 
 	// We've terminated, write it all out
