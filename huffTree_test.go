@@ -518,7 +518,7 @@ func TestCompressHeapTest(t *testing.T) {
 
 func TestCompressHuffTree(t *testing.T) {
 	compressed := string(rand.Int63())
-	decompressed := ".test"
+	decompressed := string(rand.Int63())
 	err := EncodeText("./huffTree.go", compressed)
 
 	errorIfNecessary(t, err)
