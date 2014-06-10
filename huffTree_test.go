@@ -505,8 +505,8 @@ func TestReadAndWriteToFileExpertMode(t *testing.T) {
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestCompressLicense(t *testing.T) {
-	compressed := string(rand.Int63())
-	decompressed := string(rand.Int63())
+	compressed := ".license.com"
+	decompressed := ".license.dec"
 	err := EncodeText("./LICENSE", compressed)
 
 	if err != nil {
@@ -518,7 +518,7 @@ func TestCompressLicense(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.Remove(decompressed)
+	//defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./LICENSE")
 	if err != nil {
@@ -531,13 +531,13 @@ func TestCompressLicense(t *testing.T) {
 	}
 
 	if !bytes.Equal(orig, other) {
-		t.Error("Incorrect compressing of LICENSE")
+		t.Error("LICENSE compressed/decompressed improperly")
 	}
 }
 
 func TestCompressReadme(t *testing.T) {
-	compressed := string(rand.Int63())
-	decompressed := string(rand.Int63())
+	compressed := ".readme.com"
+	decompressed := ".readme.dec"
 	err := EncodeText("./README.md", compressed)
 
 	if err != nil {
@@ -562,13 +562,13 @@ func TestCompressReadme(t *testing.T) {
 	}
 
 	if !bytes.Equal(orig, other) {
-		t.Error("Incorrect compressing of README.md")
+		t.Error("README.md compressed/decompressed improperly")
 	}
 }
 
 func TestCompressHeap(t *testing.T) {
-	compressed := string(rand.Int63())
-	decompressed := string(rand.Int63())
+	compressed := ".heap.com"
+	decompressed := ".heap.dec"
 	err := EncodeText("./heap.go", compressed)
 
 	if err != nil {
@@ -593,13 +593,13 @@ func TestCompressHeap(t *testing.T) {
 	}
 
 	if !bytes.Equal(orig, other) {
-		t.Error("Incorrect compressing of heap.go")
+		t.Error("heap.go compressed/decompressed improperly")
 	}
 }
 
 func TestCompressHeapTest(t *testing.T) {
-	compressed := string(rand.Int63())
-	decompressed := string(rand.Int63())
+	compressed := ".heap_test.com"
+	decompressed := ".heap_test.dec"
 	err := EncodeText("./heap_test.go", compressed)
 
 	if err != nil {
@@ -624,13 +624,13 @@ func TestCompressHeapTest(t *testing.T) {
 	}
 
 	if !bytes.Equal(orig, other) {
-		t.Error("Incorrect compressing of heap_test.go")
+		t.Error("heap_test.go compressed/decompressed improperly")
 	}
 }
 
 func TestCompressHuffTree(t *testing.T) {
-	compressed := string(rand.Int63())
-	decompressed := string(rand.Int63())
+	compressed := ".huffTree.com"
+	decompressed := ".huffTree.dec"
 	err := EncodeText("./huffTree.go", compressed)
 
 	if err != nil {
@@ -661,8 +661,8 @@ func TestCompressHuffTree(t *testing.T) {
 
 func TestCompressHuffTreeTest(t *testing.T) {
 	// The irony
-	compressed := "treec"
-	decompressed := "treed"
+	compressed := ".huffTree_test.com"
+	decompressed := ".huffTree_test.dec"
 	err := EncodeText("./huffTree_test.go", compressed)
 
 	if err != nil {
@@ -687,15 +687,15 @@ func TestCompressHuffTreeTest(t *testing.T) {
 	}
 
 	if !bytes.Equal(orig, other) {
-		t.Error("Incorrect compressing of huffTree_test.go")
+		t.Error("huffTree_test.go compressed/decompressed improperly")
 	}
 }
 
-func TestCompressDecompressUlysses(t *testing.T) {
-	compressed := "testc"
-	decompressed := "testd"
-	err := EncodeText("./.test_docs/ulysses.txt", compressed)
-	// defer os.Remove(compressed)
+func TestCompressDecompressJaneEyre(t *testing.T) {
+	compressed := ".janeeyre.com"
+	decompressed := ".janeeyre.dec"
+	err := EncodeText("./.test_docs/janeeyre.txt", compressed)
+	defer os.Remove(compressed)
 	if err != nil {
 		t.Error(err)
 	}
@@ -706,54 +706,56 @@ func TestCompressDecompressUlysses(t *testing.T) {
 		t.Error(err)
 	}
 
-	orig, err := ioutil.ReadFile("./.test_docs/ulysses.txt")
+	orig, err := ioutil.ReadFile("./.test_docs/janeeyre.txt")
 	if err != nil {
 		t.Error(err)
 	}
 
 	other, err := ioutil.ReadFile(decompressed)
 	if !bytes.Equal(orig, other) {
-		t.Error("Ulysses compressed/decompressed improperly")
+		t.Error("janeeyre compressed/decompressed improperly")
 	}
 }
 
 // The ringer
 func TestCompressDecompressBooks(t *testing.T) {
-	if !testing.Short() {
-		// Compress and decompress all the books in the .test_docs folder
-		files, err := ioutil.ReadDir("./.test_docs/")
+	if testing.Short() {
+		t.SkipNow()
+	}
+
+	// Compress and decompress all the books in the .test_docs folder
+	files, err := ioutil.ReadDir("./.test_docs/")
+	if err != nil {
+		t.Error(err)
+	}
+
+	for _, fileInfo := range files {
+		name := fileInfo.Name()
+		err := EncodeText("./.test_docs/"+name, name+".enc")
 		if err != nil {
 			t.Error(err)
 		}
-		
-		for _, fileInfo := range files {
-			name := fileInfo.Name()
-			err := EncodeText("./.test_docs/" + name, name + ".enc")
-			if err != nil {
-				t.Error(err)
-			}
 
-			err = DecodeText(name + ".enc", name + ".dec")
-			if err != nil {
-				t.Error(err)
-			}
-
-			orig, err := ioutil.ReadFile("./.test_docs/" + name)
-			if err != nil {
-				t.Error(err)
-			}
-
-			other, err := ioutil.ReadFile(name + ".dec")
-			if err != nil {
-				t.Error(err)
-			}
-
-			if !bytes.Equal(orig, other) {
-				t.Error(name + " compressed/decompressed improperly.")
-			}
-			os.Remove(name + ".enc")
-			os.Remove(name + ".dec")
+		err = DecodeText(name+".enc", name+".dec")
+		if err != nil {
+			t.Error(err)
 		}
+
+		orig, err := ioutil.ReadFile("./.test_docs/" + name)
+		if err != nil {
+			t.Error(err)
+		}
+
+		other, err := ioutil.ReadFile(name + ".dec")
+		if err != nil {
+			t.Error(err)
+		}
+
+		if !bytes.Equal(orig, other) {
+			t.Error(name + " compressed/decompressed improperly.")
+		}
+		os.Remove(name + ".enc")
+		os.Remove(name + ".dec")
 	}
 }
 
