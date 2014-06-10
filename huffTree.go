@@ -48,7 +48,7 @@ func EncodeText(fromFile, toFile string) (err error) {
 	// |             |                         |             |   The encoded file  |
 	// | magic bytes | # of compressed bytes   |   The tree  |                     |
 	// |             |    as a uint64          |             |                     |
-    // -----------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------
 
 	// Make a tree from the file
 	tree, err := makeTreeFromText(fromFile)
