@@ -1,7 +1,7 @@
 // Ben Eggers
 // GNU GPL'd
 
-package huffMan
+package huffman
 
 // Tests the heap
 import (

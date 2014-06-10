@@ -1,7 +1,7 @@
 // Ben Eggers
 // GNU GPL'd
 
-package huffMan
+package huffman
 
 // Heap for use with the Huffman Tree
 type nodeHeap []*huffNode
