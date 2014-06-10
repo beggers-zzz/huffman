@@ -570,7 +570,7 @@ func TestCompressDecompressBooks(t *testing.T) {
 		files, err := ioutil.ReadDir("./.test_docs/")
 		errorIfNecessary(t, err)
 		for _, fileInfo := range files {
-			name := "." + fileInfo.Name()
+			name := fileInfo.Name()
 			err := EncodeText("./.test_docs/" + name, name + ".enc")
 			errorIfNecessary(t, err)
 
