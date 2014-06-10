@@ -9,6 +9,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/BenedictEggers/bitIO"
+	"io"
 	"io/ioutil"
 	"os"
 )
@@ -97,10 +98,6 @@ func makeTreeFromText(filename string) (t *huffNode, err error) {
 		return nil, err
 	}
 
-	if len(buf) == 0 {
-		return nil, errors.New("Text file empty")
-	}
-
 	// Scan the byte slice "buf" and count how many times each byte shows up
 	counts := map[byte]uint32{}
 	for _, elem := range buf {
@@ -113,9 +110,6 @@ func makeTreeFromText(filename string) (t *huffNode, err error) {
 		node := &huffNode{char: currentByte, count: byteCount}
 		nodes = append(nodes, node)
 	}
-
-	// Now add an EOF character
-	nodes = append(nodes, &huffNode{char: 0, count: 1})
 
 	if len(nodes) == 0 {
 		return nil, errors.New("Invalid node slice.")
@@ -223,9 +217,6 @@ func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error
 	if err != nil {
 		return err
 	}
-
-	// Add our null character (because Go doesn't make this easy...)
-	toEncode = append(toEncode, 0)
 
 	bitReps := t.getByteMap()
 	bw, err := bitIO.NewWriterOnFile(toFile)
@@ -394,10 +385,9 @@ func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error
 	current := t
 
 	// until we reach the end of the file...
-	for current.char != 0 {
-
-		// Read a bit
-		bit, err := reader.ReadBit()
+	bit, err := reader.ReadBit()
+	for err != io.EOF {
+		// Check for other errors
 		if err != nil {
 			return err
 		}
@@ -416,6 +406,8 @@ func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error
 			// Should never happen
 			return errors.New("Got invalid bit")
 		}
+
+		bit, err = reader.ReadBit()
 	}
 
 	// We've terminated, write it all out
