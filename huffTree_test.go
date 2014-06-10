@@ -36,7 +36,9 @@ func TestMakeTreeFromNodesOneNode(t *testing.T) {
 	node := &huffNode{char: 120, count: 10}
 	nodes := []*huffNode{node}
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if root.char != 120 || root.count != 10 {
 		t.Error("Unexpected! Got node with count:", root.count, "and char:",
@@ -47,7 +49,9 @@ func TestMakeTreeFromNodesOneNode(t *testing.T) {
 func TestMakeTreeFromNodesBasicTree(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 2}, {char: 120, count: 2}}
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if root.count != 4 {
 		t.Error("Tree's root count should have been 4, was: ", root.count, ".")
@@ -69,7 +73,9 @@ func TestMakeTreeFromNodesMultiLevelTree(t *testing.T) {
 		{char: 120, count: 2},
 		{char: 121, count: 3}}
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if root.count != 7 {
 		t.Error("Tree's root count should have been 7, was:", root.count)
@@ -100,7 +106,9 @@ func TestMakeTreeFromTextEmpty(t *testing.T) {
 	filename := string(rand.Int63())
 	b := make([]byte, 0)
 	err := ioutil.WriteFile(filename, b, 0644)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(filename)
 
 	root, err := makeTreeFromText(filename)
@@ -117,11 +125,15 @@ func TestMakeTreeFromTextSingleChar(t *testing.T) {
 	filename := string(rand.Int63())
 	b := []byte{0}
 	err := ioutil.WriteFile(filename, b, 0644)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(filename)
 
 	root, err := makeTreeFromText(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if root.count != 1 || root.char != 0 {
 		t.Error("Tree was built improperly! Expected: { char: 0, count: 1 },",
@@ -133,11 +145,15 @@ func TestMakeTreeFromTextTwoOfSameChar(t *testing.T) {
 	filename := string(rand.Int63())
 	b := []byte{0, 0}
 	err := ioutil.WriteFile(filename, b, 0644)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(filename)
 
 	root, err := makeTreeFromText(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if root.count != 2 || root.char != 0 {
 		t.Error("Tree was built improperly! Expected: { char: 0, count: 2 },",
@@ -149,11 +165,15 @@ func TestMakeTreeFromTextBasicTree(t *testing.T) {
 	filename := string(rand.Int63())
 	b := []byte{0, 0, 2}
 	err := ioutil.WriteFile(filename, b, 0644)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(filename)
 
 	root, err := makeTreeFromText(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if root.count != 3 {
 		t.Error("Tree's count was wrong! Should be 3, was", root.count)
@@ -172,11 +192,15 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 	filename := string(rand.Int63())
 	b := []byte{0, 0, 1, 1, 2, 2, 2}
 	err := ioutil.WriteFile(filename, b, 0644)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(filename)
 
 	root, err := makeTreeFromText(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if root.count != 7 {
 		t.Error("Tree's count was wrong! Should be 7, was", root.count)
@@ -207,7 +231,9 @@ func TestMakeTreeFromTextMultiLevelTree(t *testing.T) {
 func TestGetByteMapOneByte(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 1}}
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	bytes := root.getByteMap()
 
@@ -224,7 +250,9 @@ func TestGetByteMapTwoBytes(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 1},
 		{char: 121, count: 2}}
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	bytes := root.getByteMap()
 	if len(bytes) != 2 {
@@ -245,7 +273,9 @@ func TestGetByteMapSeveralBytes(t *testing.T) {
 		{char: 121, count: 2},
 		{char: 122, count: 3}}
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	bytes := root.getByteMap()
 	if len(bytes) != 3 {
@@ -273,7 +303,9 @@ func TestGetByteMapManyBytes(t *testing.T) {
 		{char: 124, count: 16}}
 
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	bytes := root.getByteMap()
 	if len(bytes) != 5 {
@@ -310,21 +342,33 @@ func TestReadAndWriteToFileOneNodeTree(t *testing.T) {
 	nodes := []*huffNode{{char: 120, count: 1}}
 
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err := os.Create(filename)
 	defer os.Remove(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	err = root.writeToFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	err = file.Close()
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err = os.Open(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	newRoot, err := makeTreeFromTreeFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !equal(root, newRoot) {
 		t.Error("Something went wrong creating the new tree.")
@@ -337,21 +381,33 @@ func TestReadAndWriteToFileBasic(t *testing.T) {
 		{char: 121, count: 2}}
 
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err := os.Create(filename)
 	defer os.Remove(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	err = root.writeToFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	err = file.Close()
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err = os.Open(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	newRoot, err := makeTreeFromTreeFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !equal(root, newRoot) {
 		t.Error("Something went wrong creating the new tree!")
@@ -368,21 +424,33 @@ func TestReadAndWriteToFileMoreAdvanced(t *testing.T) {
 	}
 
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err := os.Create(filename)
 	defer os.Remove(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	err = root.writeToFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	err = file.Close()
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err = os.Open(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	newRoot, err := makeTreeFromTreeFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !equal(root, newRoot) {
 		t.Error("Something went wrong creating the new tree!")
@@ -399,21 +467,33 @@ func TestReadAndWriteToFileExpertMode(t *testing.T) {
 	}
 
 	root, err := makeTreeFromNodeSlice(nodes)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err := os.Create(filename)
 	defer os.Remove(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	err = root.writeToFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	err = file.Close()
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	file, err = os.Open(filename)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	newRoot, err := makeTreeFromTreeFile(file)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !equal(root, newRoot) {
 		t.Error("Something went wrong creating the new tree!")
@@ -429,18 +509,26 @@ func TestCompressLicense(t *testing.T) {
 	decompressed := string(rand.Int63())
 	err := EncodeText("./LICENSE", compressed)
 
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(compressed)
 
 	err = DecodeText(compressed, decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./LICENSE")
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	other, err := ioutil.ReadFile(decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !bytes.Equal(orig, other) {
 		t.Error("Incorrect compressing of LICENSE")
@@ -452,18 +540,26 @@ func TestCompressReadme(t *testing.T) {
 	decompressed := string(rand.Int63())
 	err := EncodeText("./README.md", compressed)
 
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(compressed)
 
 	err = DecodeText(compressed, decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./README.md")
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	other, err := ioutil.ReadFile(decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !bytes.Equal(orig, other) {
 		t.Error("Incorrect compressing of README.md")
@@ -475,18 +571,26 @@ func TestCompressHeap(t *testing.T) {
 	decompressed := string(rand.Int63())
 	err := EncodeText("./heap.go", compressed)
 
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(compressed)
 
 	err = DecodeText(compressed, decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./heap.go")
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	other, err := ioutil.ReadFile(decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !bytes.Equal(orig, other) {
 		t.Error("Incorrect compressing of heap.go")
@@ -498,18 +602,26 @@ func TestCompressHeapTest(t *testing.T) {
 	decompressed := string(rand.Int63())
 	err := EncodeText("./heap_test.go", compressed)
 
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(compressed)
 
 	err = DecodeText(compressed, decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./heap_test.go")
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	other, err := ioutil.ReadFile(decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !bytes.Equal(orig, other) {
 		t.Error("Incorrect compressing of heap_test.go")
@@ -521,18 +633,26 @@ func TestCompressHuffTree(t *testing.T) {
 	decompressed := string(rand.Int63())
 	err := EncodeText("./huffTree.go", compressed)
 
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(compressed)
 
 	err = DecodeText(compressed, decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./huffTree.go")
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	other, err := ioutil.ReadFile(decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !bytes.Equal(orig, other) {
 		t.Error("Incorrect compressing of huffTree.go")
@@ -541,47 +661,92 @@ func TestCompressHuffTree(t *testing.T) {
 
 func TestCompressHuffTreeTest(t *testing.T) {
 	// The irony
-	compressed := string(rand.Int63())
-	decompressed := string(rand.Int63())
+	compressed := "treec"
+	decompressed := "treed"
 	err := EncodeText("./huffTree_test.go", compressed)
 
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(compressed)
 
 	err = DecodeText(compressed, decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 	defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./huffTree_test.go")
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	other, err := ioutil.ReadFile(decompressed)
-	errorIfNecessary(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	if !bytes.Equal(orig, other) {
 		t.Error("Incorrect compressing of huffTree_test.go")
 	}
 }
 
-// The ringer test
+func TestCompressDecompressUlysses(t *testing.T) {
+	compressed := "testc"
+	decompressed := "testd"
+	err := EncodeText("./.test_docs/ulysses.txt", compressed)
+	// defer os.Remove(compressed)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = DecodeText(compressed, decompressed)
+	// defer os.Remove(decompressed)
+	if err != nil {
+		t.Error(err)
+	}
+
+	orig, err := ioutil.ReadFile("./.test_docs/ulysses.txt")
+	if err != nil {
+		t.Error(err)
+	}
+
+	other, err := ioutil.ReadFile(decompressed)
+	if !bytes.Equal(orig, other) {
+		t.Error("Ulysses compressed/decompressed improperly")
+	}
+}
+
+// The ringer
 func TestCompressDecompressBooks(t *testing.T) {
 	if !testing.Short() {
 		// Compress and decompress all the books in the .test_docs folder
 		files, err := ioutil.ReadDir("./.test_docs/")
-		errorIfNecessary(t, err)
+		if err != nil {
+			t.Error(err)
+		}
+		
 		for _, fileInfo := range files {
 			name := fileInfo.Name()
 			err := EncodeText("./.test_docs/" + name, name + ".enc")
-			errorIfNecessary(t, err)
+			if err != nil {
+				t.Error(err)
+			}
 
 			err = DecodeText(name + ".enc", name + ".dec")
-			errorIfNecessary(t, err)
+			if err != nil {
+				t.Error(err)
+			}
 
 			orig, err := ioutil.ReadFile("./.test_docs/" + name)
-			errorIfNecessary(t, err)
+			if err != nil {
+				t.Error(err)
+			}
 
 			other, err := ioutil.ReadFile(name + ".dec")
-			errorIfNecessary(t, err)
+			if err != nil {
+				t.Error(err)
+			}
 
 			if !bytes.Equal(orig, other) {
 				t.Error(name + " compressed/decompressed improperly.")
@@ -595,13 +760,6 @@ func TestCompressDecompressBooks(t *testing.T) {
 ////////////////////////////////////////////////////////////////////////////////
 // helper functions
 ////////////////////////////////////////////////////////////////////////////////
-
-// If err is non-nil, will call t.Error(err). Just for code clean-ness
-func errorIfNecessary(t *testing.T, err error) {
-	if err != nil {
-		t.Error(err)
-	}
-}
 
 // Checks if the passed two trees are equal--that is, if they were set on the same
 // encoded text, they would produce the exact some decoded text.
