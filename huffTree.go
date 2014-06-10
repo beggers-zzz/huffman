@@ -97,6 +97,10 @@ func makeTreeFromText(filename string) (t *huffNode, err error) {
 		return nil, err
 	}
 
+	if len(buf) == 0 {
+		return nil, errors.New("Text file empty")
+	}
+
 	// Scan the byte slice "buf" and count how many times each byte shows up
 	counts := map[byte]uint32{}
 	for _, elem := range buf {
@@ -109,6 +113,9 @@ func makeTreeFromText(filename string) (t *huffNode, err error) {
 		node := &huffNode{char: currentByte, count: byteCount}
 		nodes = append(nodes, node)
 	}
+
+	// Now add an EOF character
+	nodes = append(nodes, &huffNode{char: 0, count: 1})
 
 	if len(nodes) == 0 {
 		return nil, errors.New("Invalid node slice.")
@@ -146,7 +153,7 @@ func makeTreeFromNodeSlice(nodes []*huffNode) (t *huffNode, err error) {
 	for nh.Len() > 1 {
 		nodeOne := heap.Pop(nh).(*huffNode)
 		nodeTwo := heap.Pop(nh).(*huffNode)
-		newNode := &huffNode{char: 0, // random char
+		newNode := &huffNode{char: 1,
 			count: nodeOne.count + nodeTwo.count,
 			left:  nodeOne,
 			right: nodeTwo}
@@ -217,6 +224,9 @@ func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error
 		return err
 	}
 
+	// Add our null character (because Go doesn't make this easy...)
+	toEncode = append(toEncode, 0)
+
 	bitReps := t.getByteMap()
 	bw, err := bitIO.NewWriterOnFile(toFile)
 	if err != nil {
@@ -234,7 +244,8 @@ func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error
 		}
 	}
 
-	return nil
+	_, err = bw.CloseAndReturnFile()
+	return err
 }
 
 // getByteMap returns a map from all the bytes in the tree onto strings, which will
@@ -324,7 +335,7 @@ func makeTreeFromTreeFile(file *os.File) (t *huffNode, err error) {
 
 	// Now we read in all the characters and their associated bit strings,
 	// and make a tree out of them
-	root := huffNode{}
+	root := huffNode{char: 1}
 	for i := 0; i < length; i++ {
 		_, err = file.Read(bytes)
 		if err != nil {
@@ -352,12 +363,12 @@ func makeTreeFromTreeFile(file *os.File) (t *huffNode, err error) {
 
 			if bit == 0 {
 				if current.left == nil {
-					current.left = &huffNode{}
+					current.left = &huffNode{char: 1}
 				}
 				current = current.left
 			} else {
 				if current.right == nil {
-					current.right = &huffNode{}
+					current.right = &huffNode{char: 1}
 				}
 				current = current.right
 			}
@@ -373,13 +384,13 @@ func makeTreeFromTreeFile(file *os.File) (t *huffNode, err error) {
 // it will be truncated. Returns a nil error on success, non-nil error otherwise.
 func (t *huffNode) writeDecodedText(fromFile *os.File, toFile string) (err error) {
 	// Set up a BitReader on the file to decodes
-	reader, err := bitIO.NewReader(toFile)
+	reader, err := bitIO.NewReaderOnFile(fromFile)
 	if err != nil {
 		return err
 	}
 
 	// Decode our bits
-	toWrite := make([]byte, 0)
+	toWrite := []byte{}
 	current := t
 
 	// until we reach the end of the file...
