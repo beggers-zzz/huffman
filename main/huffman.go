@@ -4,9 +4,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/BenedictEggers/huffman"
-	"flag"
 	"os"
 )
 
