@@ -7,6 +7,7 @@ package huffman
 // tested depend on each other, so failures are apparent at the lowest level.
 
 import (
+	"bytes"
 	"io/ioutil"
 	"math"
 	"math/rand"
@@ -423,7 +424,144 @@ func TestReadAndWriteToFileExpertMode(t *testing.T) {
 // Full-on tests. Encode, then decode several files of varying complexity
 ////////////////////////////////////////////////////////////////////////////////
 
-func Test
+func TestCompressLicense(t *testing.T) {
+	compressed := string(rand.Int63())
+	decompressed := string(rand.Int63())
+	err := EncodeText("./LICENSE", compressed)
+
+	errorIfNecessary(t, err)
+	defer os.Remove(compressed)
+
+	err = DecodeText(compressed, decompressed)
+	errorIfNecessary(t, err)
+	defer os.Remove(decompressed)
+
+	orig, err := ioutil.ReadFile("./LICENSE")
+	errorIfNecessary(t, err)
+
+	other, err := ioutil.ReadFile(decompressed)
+	errorIfNecessary(t, err)
+
+	if !bytes.Equal(orig, other) {
+		t.Error("Incorrect compressing of LICENSE")
+	}
+}
+
+func TestCompressReadme(t *testing.T) {
+	compressed := string(rand.Int63())
+	decompressed := string(rand.Int63())
+	err := EncodeText("./README.md", compressed)
+
+	errorIfNecessary(t, err)
+	defer os.Remove(compressed)
+
+	err = DecodeText(compressed, decompressed)
+	errorIfNecessary(t, err)
+	defer os.Remove(decompressed)
+
+	orig, err := ioutil.ReadFile("./README.md")
+	errorIfNecessary(t, err)
+
+	other, err := ioutil.ReadFile(decompressed)
+	errorIfNecessary(t, err)
+
+	if !bytes.Equal(orig, other) {
+		t.Error("Incorrect compressing of README.md")
+	}
+}
+
+func TestCompressHeap(t *testing.T) {
+	compressed := string(rand.Int63())
+	decompressed := string(rand.Int63())
+	err := EncodeText("./heap.go", compressed)
+
+	errorIfNecessary(t, err)
+	defer os.Remove(compressed)
+
+	err = DecodeText(compressed, decompressed)
+	errorIfNecessary(t, err)
+	defer os.Remove(decompressed)
+
+	orig, err := ioutil.ReadFile("./heap.go")
+	errorIfNecessary(t, err)
+
+	other, err := ioutil.ReadFile(decompressed)
+	errorIfNecessary(t, err)
+
+	if !bytes.Equal(orig, other) {
+		t.Error("Incorrect compressing of heap.go")
+	}
+}
+
+func TestCompressHeapTest(t *testing.T) {
+	compressed := string(rand.Int63())
+	decompressed := string(rand.Int63())
+	err := EncodeText("./heap_test.go", compressed)
+
+	errorIfNecessary(t, err)
+	defer os.Remove(compressed)
+
+	err = DecodeText(compressed, decompressed)
+	errorIfNecessary(t, err)
+	defer os.Remove(decompressed)
+
+	orig, err := ioutil.ReadFile("./heap_test.go")
+	errorIfNecessary(t, err)
+
+	other, err := ioutil.ReadFile(decompressed)
+	errorIfNecessary(t, err)
+
+	if !bytes.Equal(orig, other) {
+		t.Error("Incorrect compressing of heap_test.go")
+	}
+}
+
+func TestCompressHuffTree(t *testing.T) {
+	compressed := string(rand.Int63())
+	decompressed := ".test"
+	err := EncodeText("./huffTree.go", compressed)
+
+	errorIfNecessary(t, err)
+	defer os.Remove(compressed)
+
+	err = DecodeText(compressed, decompressed)
+	errorIfNecessary(t, err)
+	defer os.Remove(decompressed)
+
+	orig, err := ioutil.ReadFile("./huffTree.go")
+	errorIfNecessary(t, err)
+
+	other, err := ioutil.ReadFile(decompressed)
+	errorIfNecessary(t, err)
+
+	if !bytes.Equal(orig, other) {
+		t.Error("Incorrect compressing of huffTree.go")
+	}
+}
+
+func TestCompressHuffTreeTest(t *testing.T) {
+	// The irony
+	compressed := string(rand.Int63())
+	decompressed := string(rand.Int63())
+	err := EncodeText("./huffTree_test.go", compressed)
+
+	errorIfNecessary(t, err)
+	defer os.Remove(compressed)
+
+	err = DecodeText(compressed, decompressed)
+	errorIfNecessary(t, err)
+	defer os.Remove(decompressed)
+
+	orig, err := ioutil.ReadFile("./huffTree_test.go")
+	errorIfNecessary(t, err)
+
+	other, err := ioutil.ReadFile(decompressed)
+	errorIfNecessary(t, err)
+
+	if !bytes.Equal(orig, other) {
+		t.Error("Incorrect compressing of huffTree_test.go")
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // helper functions
