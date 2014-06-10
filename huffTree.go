@@ -230,7 +230,8 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 // writeEncodedTextToFile encodes the text in the passed file under the tree
 // it was called on, and writes out the encoded bits to the passed file. Is called
 // by EncodeText. Returns a non-nil error on failure, nil otherwise.
-func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error, length uint64) {
+func (t *huffNode) writeEncodedText(fromFile string,
+	toFile *os.File) (err error, length uint64) {
 	toEncode, err := ioutil.ReadFile(fromFile)
 	if err != nil {
 		return err, 0
