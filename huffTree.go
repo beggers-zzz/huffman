@@ -43,12 +43,12 @@ var endianness = binary.LittleEndian
 func EncodeText(fromFile, toFile string) (err error) {
 
 	// The anatomy of an encoded file is as follows:
-	// _________________________________________________________________________________________________
-	// |    6 bytes  |        8 bytes          |   ? bytes   |                 ? bytes                 |
-	// |             |                         |             |             The encoded file            |
-	// | magic bytes | # of compressed bytes   |   The tree  |                                         |
-	// |             |    as a uint64          |             |                                         |
-        // -------------------------------------------------------------------------------------------------
+	// _____________________________________________________________________________
+	// |    6 bytes  |        8 bytes          |   ? bytes   |       ? bytes       |
+	// |             |                         |             |   The encoded file  |
+	// | magic bytes | # of compressed bytes   |   The tree  |                     |
+	// |             |    as a uint64          |             |                     |
+    // -----------------------------------------------------------------------------
 
 	// Make a tree from the file
 	tree, err := makeTreeFromText(fromFile)
