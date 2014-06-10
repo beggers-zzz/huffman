@@ -57,7 +57,7 @@ func EncodeText(fromFile, toFile string) (err error) {
 	}
 
 	// Set up the write cursor to be in the correct position
-	_, err = openFile.Seek(int64(len(magicBytes))+4, 0)
+	_, err = openFile.Seek(int64(len(magicBytes))+8, 0)
 	if err != nil {
 		// Something went wrong, delete the file
 		os.Remove(toFile)
@@ -230,7 +230,7 @@ func (t *huffNode) writeToFile(f *os.File) (err error) {
 // writeEncodedTextToFile encodes the text in the passed file under the tree
 // it was called on, and writes out the encoded bits to the passed file. Is called
 // by EncodeText. Returns a non-nil error on failure, nil otherwise.
-func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error, length uint32) {
+func (t *huffNode) writeEncodedText(fromFile string, toFile *os.File) (err error, length uint64) {
 	toEncode, err := ioutil.ReadFile(fromFile)
 	if err != nil {
 		return err, 0
@@ -322,7 +322,7 @@ func DecodeText(fromFile, toFile string) (err error) {
 	}
 
 	// Read the length
-	length := uint32(0)
+	length := uint64(0)
 	err = binary.Read(encoded, endianness, &length)
 	if err != nil {
 		os.Remove(toFile)
@@ -407,7 +407,7 @@ func makeTreeFromTreeFile(file *os.File) (t *huffNode, err error) {
 // text into a new file described by toFile. If toFile exists before this is called,
 // it will be truncated. Returns a nil error on success, non-nil error otherwise.
 func (t *huffNode) writeDecodedText(fromFile *os.File,
-	toFile string, length uint32) (err error) {
+	toFile string, length uint64) (err error) {
 	// Set up a BitReader on the file to decodes
 	reader, err := bitIO.NewReaderOnFile(fromFile)
 	if err != nil {
@@ -420,7 +420,7 @@ func (t *huffNode) writeDecodedText(fromFile *os.File,
 
 	// until we reach the end of the file...
 	bit, err := reader.ReadBit()
-	for err != io.EOF && uint32(len(toWrite)) < length {
+	for err != io.EOF && uint64(len(toWrite)) < length {
 		// Check for other errors
 		if err != nil {
 			return err
