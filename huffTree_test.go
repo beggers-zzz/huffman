@@ -518,7 +518,7 @@ func TestCompressLicense(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	//defer os.Remove(decompressed)
+	defer os.Remove(decompressed)
 
 	orig, err := ioutil.ReadFile("./LICENSE")
 	if err != nil {
@@ -701,7 +701,7 @@ func TestCompressDecompressJaneEyre(t *testing.T) {
 	}
 
 	err = DecodeText(compressed, decompressed)
-	// defer os.Remove(decompressed)
+	defer os.Remove(decompressed)
 	if err != nil {
 		t.Error(err)
 	}
