@@ -41,6 +41,15 @@ var endianness = binary.LittleEndian
 // a tree created on the file. On success, returns a nil error and returns a
 // non-nil error otherwise. If something does go wrong, there will be no file.
 func EncodeText(fromFile, toFile string) (err error) {
+
+	// The anatomy of an encoded file is as follows:
+	// _________________________________________________________________________________________________
+	// |    6 bytes  |        8 bytes          |   ? bytes   |                 ? bytes                 |
+	// |             |                         |             |             The encoded file            |
+	// | magic bytes | # of compressed bytes   |   The tree  |                                         |
+	// |             |    as a uint64          |             |                                         |
+        // -------------------------------------------------------------------------------------------------
+
 	// Make a tree from the file
 	tree, err := makeTreeFromText(fromFile)
 	if err != nil {
@@ -87,7 +96,6 @@ func EncodeText(fromFile, toFile string) (err error) {
 		os.Remove(toFile)
 		return err
 	}
-
 	_, err = openFile.Write(magicBytes[:])
 	if err != nil {
 		// Something went wrong, delete the file
@@ -95,6 +103,7 @@ func EncodeText(fromFile, toFile string) (err error) {
 		return err
 	}
 
+	// And the length
 	err = binary.Write(openFile, endianness, length)
 	if err != nil {
 		os.Remove(toFile)
