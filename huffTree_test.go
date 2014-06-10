@@ -563,6 +563,35 @@ func TestCompressHuffTreeTest(t *testing.T) {
 	}
 }
 
+// The ringer test
+func TestCompressDecompressBooks(t *testing.T) {
+	if !testing.Short() {
+		// Compress and decompress all the books in the .test_docs folder
+		files, err := ioutil.ReadDir("./.test_docs/")
+		errorIfNecessary(t, err)
+		for _, fileInfo := range files {
+			name := "." + fileInfo.Name()
+			err := EncodeText("./.test_docs/" + name, name + ".enc")
+			errorIfNecessary(t, err)
+
+			err = DecodeText(name + ".enc", name + ".dec")
+			errorIfNecessary(t, err)
+
+			orig, err := ioutil.ReadFile("./.test_docs/" + name)
+			errorIfNecessary(t, err)
+
+			other, err := ioutil.ReadFile(name + ".dec")
+			errorIfNecessary(t, err)
+
+			if !bytes.Equal(orig, other) {
+				t.Error(name + " compressed/decompressed improperly.")
+			}
+			os.Remove(name + ".enc")
+			os.Remove(name + ".dec")
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // helper functions
 ////////////////////////////////////////////////////////////////////////////////
